@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<title>小新首选高质量</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif;font-size:13px;}
+body{background:#ffffff;}
+.pop-mask{
+    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);
+    z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;
+}
+.pop-box{
+    width:100%;max-width:420px;background:#fff;border-radius:16px;overflow:hidden;
+}
+.pop-top{
+    background:#2962ed;color:#fff;padding:18px 16px;text-align:center;position:relative;
+}
+.pop-top h2{font-size:19px;margin-bottom:6px;}
+.pop-close-x{position:absolute;right:14px;top:14px;font-size:17px;}
+.pop-top-desc{font-size:12px;opacity:0.9;}
+.pop-content{
+    padding:14px;font-size:12px;line-height:1.6;color:#222;max-height:60vh;overflow-y:auto;
+}
+.pop-bottom{
+    padding:12px 16px;display:flex;justify-content:flex-end;gap:8px;
+}
+.btn-close{
+    padding:9px 24px;background:#eef2ff;color:#2962ed;border-radius:8px;border:none;font-size:13px;
+}
+
+.page-home{display:block;padding-bottom:30px;}
+.header-shop{background:#2962ed;color:#fff;padding:16px;overflow:hidden;}
+.header-buttons{
+    float:right;display:flex;flex-direction:column;gap:6px;
+    margin-top:0;margin-bottom:8px;
+}
+.order-btn,.contact-btn{
+    background:#fff;color:#2962ed;padding:5px 11px;border-radius:18px;
+    border:none;font-size:12px;text-decoration:none;text-align:center;
+}
+.shop-avatar{
+    width:52px;height:52px;border-radius:50%;background:#fff;
+    float:left;margin-right:10px;overflow:hidden;
+}
+.shop-avatar img{width:100%;height:100%;object-fit:cover;}
+.shop-name{font-size:17px;font-weight:bold;margin-bottom:4px;}
+.shop-sub{font-size:14px;margin-bottom:8px;opacity:0.95;}
+.tag-row{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;}
+.tag{
+    background:rgba(255,255,255,0.22);
+    padding:2px 5px;border-radius:24px;font-size:11px;
+}
+.shop-data-text{font-size:12px;margin:4px 0 8px;opacity:0.95;}
+.shop-tips{margin:8px 0;line-height:1.6;font-size:13px;}
+
+/* 黑色垂直滚动横幅 */
+.banner {
+  background:#111111;
+  border-radius:999px;
+  height:28px;
+  overflow:hidden;
+  margin:10px 0;
+}
+.banner-wrap{
+  animation: rollUp 26.4s linear infinite;
+}
+.banner-item{
+  height:28px;
+  line-height:28px;
+  text-align:center;
+  font-size:11px;
+  color:#ffdd44;
+  font-weight:500;
+}
+/* 22条号码，每条1.2s 22*1.2=26.4s一轮 */
+@keyframes rollUp{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(-616px);}
+}
+
+.tab-wrap{padding:12px;}
+.tab-head{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.tab-item{
+    background:#f3f5f9;padding:12px;border-radius:10px;border:2px solid transparent;cursor:pointer;
+}
+.tab-item.active{border-color:#2962ed;background:#e8f0ff;}
+.tab-title{font-size:14px;font-weight:bold;margin-bottom:3px;}
+.tab-sub{font-size:11px;color:#666;}
+.goods-panel{display:none;}
+.goods-panel.active{display:block;}
+.goods-item{padding:10px;border-bottom:1px solid #eee;cursor:pointer;}
+.goods-name{font-size:13px;margin-bottom:3px;}
+.goods-row{display:flex;justify-content:space-between;}
+.goods-price{color:#f44336;font-size:14px;font-weight:bold;}
+.goods-tag{color:#2962ed;font-size:11px;}
+.goods-tag.soldout{color:#ff5722;font-size:11px;}
+.goods-img{width:100%;height:130px;object-fit:contain;border-radius:6px;margin-bottom:6px;background:#f5f5f5;}
+
+.form-mask{position:fixed;inset:0;background:rgba(0,0,0.6);display:none;z-index:998;align-items:flex-end;justify-content:center;}
+.form-box{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px;max-width:480px;}
+.form-title{font-size:15px;font-weight:bold;margin-bottom:10px;}
+.form-tag{display:flex;gap:5px;margin-bottom:10px;}
+.tag1{background:#e7f9e7;color:#28a745;padding:2px 5px;border-radius:4px;font-size:11px;}
+.tag2{background:#e6f0ff;color:#2578dd;padding:2px 5px;border-radius:4px;font-size:11px;}
+.form-text{margin:10px 0;font-size:12px;line-height:1.6}
+.form-input{width:100%;border:1px solid #ddd;padding:9px;border-radius:6px;margin:6px 0;font-size:12px;}
+.pay-type{margin:10px 0;}
+.pay-wx{border:2px solid #2578dd;padding:7px 14px;border-radius:6;text-align:center;font-size:12px}
+.num-box{display:flex;align-items:center;gap:8px;margin:12px 0}
+.num-btn{width:28px;height:28px;border:1px solid #ddd;border-radius:4px;font-size:14px;cursor:pointer;}
+.num-input{width:38px;text-align:center;border:1px solid #ddd;padding:3px;font-size:12px}
+.submit-pay{width:100%;background:#2578dd;color:#fff;border:none;padding:10px;border-radius:6px;font-size:13px;cursor:pointer;}
+.load-tip{text-align:center;color:#2578dd;margin:4px 0;font-size:11px;display:none;}
+
+.buy-pop-mask{position:fixed;inset:0;background:rgba(0,0,0.7);display:none;z-index:999;align-items:center;justify-content:center;padding:12px;}
+.buy-pop-box{background:#fff;padding:14px;border-radius:8px;text-align:center;width:100%;max-width:280px;}
+.pop-tip{font-size:16px;color:#f53f3f;font-weight:bold;margin-bottom:8px;}
+.buy-pop-box img{width:100%;border-radius:6px;margin-bottom:8px;}
+.close-pop{background:#2578dd;color:#fff;border:none;padding:5px 18px;border-radius:4px;font-size:12px;cursor:pointer;}
+
+.warn-mask{position:fixed;inset:0;background:rgba(0,0,0.75);display:none;z-index:1000;align-items:center;justify-content:center;padding:12px;}
+.warn-box{background:#fff;padding:16px 14px;border-radius:8px;text-align:center;max-width:260px;width:100%;}
+.warn-text{font-size:12px;color:#333;line-height:1.6;margin-bottom:12px;}
+.known-btn{background:#2578dd;color:#fff;border:none;padding:6px 22px;border-radius:4px;font-size:12px;cursor:pointer;}
+
+.msg-mask{position:fixed;inset:0;background:rgba(0,0,0.7);display:none;z-index:1001;align-items:center;justify-content:center;padding:12px;}
+.msg-box{background:#fff;padding:16px 14px;border-radius:8px;text-align:center;max-width:260px;width:100%;}
+.msg-title{font-size:15px;font-weight:bold;color:#2578dd;margin-bottom:6px;}
+.msg-text{font-size:11px;color:#666;line-height:1.6;margin-bottom:12px;}
+.msg-close{background:#2578dd;color:#fff;border:none;padding:5px 22px;border-radius:4px;font-size:12px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="pop-mask" id="mainPop">
+    <div class="pop-box">
+        <div class="pop-top">
+            <span class="pop-close-x" onclick="closePop()">✕</span>
+            <h2>「7x24」小时自动发货</h2>
+            <div class="pop-top-desc">选购商品,在线付款 · 系统自动发货</div>
+        </div>
+        <div class="pop-content">
+温馨提示：本站不提供任何担保、私下交易被骗一律与本站无关。<br><br>
+1、本平台仅提供卡密寄售服务，本平台非销售商，建议先咨询卖家软件使用方法和用途后购买，非卡密问题本站不予受理售后争议。<br><br>
+2、平台提供卡密查询时间为1个月（购买后请自行保存）如遇游戏辅助/游戏外挂/假卡/欺诈/涉黄/涉赌/涉毒等违反国家法律法规的商品请当天24点前与我们平台客服联系举报。<br><br>
+3、平台提供售后时间为截至当日24点前，新买家请不要卡着11点多去购买订单，防止投诉不上等问题出现，有问题第一时间投诉，超时资金结算无法售后。<br><br>
+4、平台不为任何违规商品担保，违规请举报。<br><br>
+防骗提醒：
+1.卡密内容为"联系QQ取卡或者QQ群拿货"
+2.以各种理由推脱第二天发货
+3.商品问题不售后
+4.充值返现骗局
+5.实物快递发货全是骗局
+6.本站实体资质可查，市面多皮包网站
+        </div>
+        <div class="pop-bottom">
+            <button class="btn-close" onclick="closePop()">关闭</button>
+        </div>
+    </div>
+</div>
+
+<div class="page-home" id="homePage">
+    <div class="header-shop">
+        <div class="header-buttons">
+            <a class="order-btn" href="https://shujuhao2026.github.io/cha/" target="_blank">订单查询</a>
+            <button class="contact-btn">联系TA</button>
+        </div>
+
+        <div class="shop-avatar">
+            <img src="https://i.ibb.co/Y72dpgSH/IMG-2520.jpg">
+        </div>
+        <div class="shop-name">小新『首选高质量💯』</div>
+        <div class="shop-sub">23 商品</div>
+
+        <div class="tag-row">
+            <span class="tag">官方认证</span>
+            <span class="tag">极速售后</span>
+            <span class="tag">正品保障</span>
+            <span class="tag">全网顶尖</span>
+        </div>
+        <div class="shop-data-text"><span id="dealNum">6869</span>成交  保证金45000元</div>
+
+        <div class="shop-tips">
+❗️恶意投诉永久拉黑无法购买<br>
+❗️官方频道@xiaoxinshujuhau<br>
+❗️下滑查看全部商品
+        </div>
+
+        <!-- 22条不重复脱敏手机号 -->
+        <div class="banner">
+            <div class="banner-wrap">
+                <div class="banner-item">184 **** **31 支付成功</div>
+                <div class="banner-item">153 **** **21 支付成功</div>
+                <div class="banner-item">183 **** **24 支付成功</div>
+                <div class="banner-item">147 **** **63 支付成功</div>
+                <div class="banner-item">132 **** **79 支付成功</div>
+                <div class="banner-item">176 **** **48 支付成功</div>
+                <div class="banner-item">138 **** **12 支付成功</div>
+                <div class="banner-item">159 **** **05 支付成功</div>
+                <div class="banner-item">198 **** **77 支付成功</div>
+                <div class="banner-item">178 **** **91 支付成功</div>
+                <div class="banner-item">135 **** **36 支付成功</div>
+                <div class="banner-item">151 **** **29 支付成功</div>
+                <div class="banner-item">139 **** **54 支付成功</div>
+                <div class="banner-item">191 **** **82 支付成功</div>
+                <div class="banner-item">156 **** **17 支付成功</div>
+                <div class="banner-item">133 **** **40 支付成功</div>
+                <div class="banner-item">187 **** **69 支付成功</div>
+                <div class="banner-item">147 **** **22 支付成功</div>
+                <div class="banner-item">152 **** **88 支付成功</div>
+                <div class="banner-item">173 **** **01 支付成功</div>
+                <div class="banner-item">188 **** **50 支付成功</div>
+                <div class="banner-item">131 **** **94 支付成功</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-wrap">
+        <h2 style="font-size:15px;margin-bottom:10px;">卡密</h2>
+        <div class="tab-head">
+            <div class="tab-item active" data-id="tab1" onclick="switchTab('tab1')">
+                <div class="tab-title">Telegram账号✈️</div>
+                <div class="tab-sub">5款</div>
+            </div>
+            <div class="tab-item" data-id="tab2" onclick="switchTab('tab2')">
+                <div class="tab-title">和平数据号📱</div>
+                <div class="tab-sub">5款</div>
+            </div>
+            <div class="tab-item" data-id="tab3" onclick="switchTab('tab3')">
+                <div class="tab-title">Vx扫码授权✨</div>
+                <div class="tab-sub">4款</div>
+            </div>
+            <div class="tab-item" data-id="tab4" onclick="switchTab('tab4')">
+                <div class="tab-title">QQ直登号🔥</div>
+                <div class="tab-sub">5款</div>
+            </div>
+            <div class="tab-item" data-id="tab5" onclick="switchTab('tab5')">
+                <div class="tab-title">PUBG账号📱</div>
+                <div class="tab-sub">2款</div>
+            </div>
+            <div class="tab-item" data-id="tab6" onclick="switchTab('tab6')">
+                <div class="tab-title">火影数据号🔥</div>
+                <div class="tab-sub">1款</div>
+            </div>
+            <div class="tab-item" data-id="tab7" onclick="switchTab('tab7')">
+                <div class="tab-title">王者数据号👑</div>
+                <div class="tab-sub">1款</div>
+            </div>
+        </div>
+
+        <!-- Telegram -->
+        <div class="goods-panel active" id="tab1">
+            <div class="goods-item">
+                <div class="goods-name">+234尼日利亚号-包登录「推荐」</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">+95缅甸号-包登录「推荐」</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">+254肯尼亚-包登录「推荐」</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存少</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">+880孟加拉-半年号-包登陆</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存少</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">+91印度号-包登录</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
+            </div>
+        </div>
+
+        <!-- 和平 -->
+        <div class="goods-panel" id="tab2">
+            <div class="goods-item">
+                <div class="goods-name">和平40-80级数据号（无售后）</div>
+                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">剩余135件</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">『和平数据号』青铜-皇冠----人工验号/包首登</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">库存少</span></div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-name">『和平数据号』10级-25级----人工验号/包首登</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">缺货</span></div>
+            </div>
+            <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底2件/可指定1件皮肤</div>
+            <div class="goods-row"><span class="goods-price">¥9</span><span class="goods-tag soldout">缺货</span></div>
+            <div class="goods-item">
+                <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底10件/可指定2件皮肤</div>
+                <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余15件</span></div>
+            </div>
+        </div>
+
+        <!-- Vx扫码 -->
+        <div class="goods-panel" id="tab3">
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/xSd0044s/IMG-2581.jpg">
+                <div class="goods-name">何平v区扫码号续费卡『只支持续费！月卡』</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/mdmT8jC/IMG-2582.jpg">
+                <div class="goods-name">『何平v区』0级未注册『100%不冻结/月卡』</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/pBzszL4W/IMG-2583.jpg">
+                <div class="goods-name">『何平v区』经典5-15级『100%不冻结/设备黑的强推！月卡』</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/nqmHx9zn/IMG-2584.jpg">
+                <div class="goods-name">『何平v区』经典10-20级『100%不冻结/月卡』</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+            </div>
+        </div>
+
+        <!-- QQ直登 -->
+        <div class="goods-panel" id="tab4">
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                <div class="goods-name">Q账密号『何平盲盒-可登营地/带op数据』录屏售后</div>
+                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">剩余13件</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                <div class="goods-name">和平q区直登号经典3级声望10～30(概率千万存款)录屏售后</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                <div class="goods-name">Q账密号『何平3-5级地铁2-9级/建议购买！』录屏售后</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                <div class="goods-name">和平地铁直登号声望值6～10级（二百五万存款以上）！！)录屏售后</div>
+                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                <div class="goods-name">高质量经典等级25～35（不会黑屋）录屏开一把售后</div>
+                <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余153件</span></div>
+            </div>
+        </div>
+
+        <!-- PUBG -->
+        <div class="goods-panel" id="tab5">
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
+                <div class="goods-name">【谷歌全球服-地铁8级-经典5-10级】-包当天隔离，红保1粉保5-支持扫码登陆</div>
+                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">剩余263件</span></div>
+            </div>
+            <div class="goods-item">
+                <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
+                <div class="goods-name">【谷歌越南服-地铁8级-经典5-10级】-包当天隔离，红保5粉保9-支持扫码登陆</div>
+                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+            </div>
+        </div>
+
+        <!-- 火影数据号 新增 -->
+        <div class="goods-panel" id="tab6">
+            <div class="goods-item">
+                <div class="goods-name">『火影忍者』盲盒保底20S</div>
+                <div class="goods-row">
+                    <span class="goods-price">¥9.9</span>
+                    <span class="goods-tag">库存充足</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 王者数据号 新增 -->
+        <div class="goods-panel" id="tab7">
+            <div class="goods-item">
+                <div class="goods-name">『王者荣耀』--3～9V-全英雄/可指定皮肤</div>
+                <div class="goods-row">
+                    <span class="goods-price">¥15</span>
+                    <span class="goods-tag">库存充足</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-mask" id="formMask">
+    <div class="form-box">
+        <div class="form-title" id="goodsTitle">商品下单</div>
+        <div class="form-tag">
+            <span class="tag1">自动发货</span>
+            <span class="tag2">一件起购</span>
+        </div>
+        <div class="form-text">
+订单查询：https://shujuhao2026.github.io/cha<br>下单填写正确联系方式，超时无售后
+        </div>
+        <form id="myForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
+            <input type="hidden" name="_subject" value="店铺订单">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="购买商品" id="titleInput">
+            <input class="form-input" name="联系方式" id="msgInput" placeholder="QQ/手机号" required>
+            <div class="pay-type">
+                <div class="pay-wx">微信支付</div>
+            </div>
+            <div class="num-box">
+                <button class="num-btn" id="numMinus">-</button>
+                <input class="num-input" id="numInput" value="1" readonly>
+                <button class="num-btn" id="numPlus">+</button>
+            </div>
+            <div class="load-tip" id="loading">提交中...</div>
+            <button type="submit" class="submit-pay" id="submitBtn">确认下单</button>
+        </form>
+    </div>
+</div>
+<div class="warn-mask" id="warnMask">
+    <div class="warn-box">
+        <div class="warn-text">本页面仅演示娱乐，无真实商品交易</div>
+        <button class="known-btn" id="knownBtn">我已知晓</button>
+    </div>
+</div>
+<div class="buy-pop-mask" id="popMask">
+    <div class="buy-pop-box">
+        <div class="pop-tip">保存图片微信付款，付款后查看订单</div>
+        <img src="https://i.ibb.co/zTTryHtR/image.jpg">
+        <button class="close-pop" id="closePopBtn">关闭</button>
+    </div>
+</div>
+<div class="msg-mask" id="msgMask">
+    <div class="msg-box">
+        <div class="msg-title">订单提交成功</div>
+        <div class="msg-text">付款后客服联系发货</div>
+        <button class="msg-close" id="msgClose">知道了</button>
+    </div>
+</div>
+
+<script>
+function closePop(){
+    document.getElementById('mainPop').style.display = 'none';
+    document.getElementById('homePage').style.display = 'block';
+}
+function switchTab(tabId){
+    document.querySelectorAll('.tab-item').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.goods-panel').forEach(el=>el.classList.remove('active'));
+    document.querySelector(`.tab-item[data-id="${tabId}"]`).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
+const allGoods = document.querySelectorAll('.goods-item');
+const formMask = document.getElementById('formMask');
+const warnMask = document.getElementById('warnMask');
+const popMask = document.getElementById('popMask');
+const msgMask = document.getElementById('msgMask');
+const loading = document.getElementById('loading');
+const myForm = document.getElementById('myForm');
+const msgInput = document.getElementById('msgInput');
+const titleInput = document.getElementById('titleInput');
+const goodsTitle = document.getElementById('goodsTitle');
+const numMinus = document.getElementById('numMinus');
+const numPlus = document.getElementById('numPlus');
+const numInput = document.getElementById('numInput');
+const knownBtn = document.getElementById('knownBtn');
+const closePopBtn = document.getElementById('closePopBtn');
+const msgClose = document.getElementById('msgClose');
+
+allGoods.forEach(item=>{
+    item.onclick = ()=>{
+        let name = item.querySelector('.goods-name').innerText;
+        goodsTitle.innerText = name;
+        titleInput.value = name;
+        formMask.style.display = 'flex';
+    }
+})
+numMinus.onclick = ()=>{
+    let n = Number(numInput.value);
+    if(n>1) numInput.value = n-1;
+}
+numPlus.onclick = ()=>{
+    let n = Number(numInput.value);
+    numInput.value = n+1;
+}
+document.getElementById('submitBtn').onclick = function(e){
+    e.preventDefault();
+    let val = msgInput.value.trim();
+    if(!val){alert("请填写联系方式");return;}
+    if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
+        alert("号码格式错误");
+        return;
+    }
+    warnMask.style.display = 'flex';
+}
+knownBtn.onclick = async ()=>{
+    warnMask.style.display = 'none';
+    loading.style.display = 'block';
+    try{
+        await fetch(myForm.action, {method:"POST",body:new FormData(myForm)});
+        formMask.style.display = 'none';
+        popMask.style.display = 'flex';
+        msgMask.style.display = 'flex';
+        msgInput.value = "";
+        numInput.value = 1;
+    }catch(err){alert("提交失败，切换网络重试");}
+    loading.style.display = 'none';
+}
+closePopBtn.onclick = ()=> popMask.style.display = 'none';
+msgClose.onclick = ()=> msgMask.style.display = 'none';
+formMask.onclick = e=>{if(e.target === formMask) formMask.style.display = 'none';}
+warnMask.onclick = e=>{if(e.target === warnMask) warnMask.style.display = 'none';}
+popMask.onclick = e=>{if(e.target === popMask) popMask.style.display = 'none';}
+msgMask.onclick = e=>{if(e.target === msgMask) msgMask.style.display = 'none';}
+
+// 成交数字自增
+let dealNum = document.getElementById('dealNum');
+let saveCount = localStorage.getItem('dealCount');
+if(saveCount) dealNum.innerText = saveCount;
+else localStorage.setItem('dealCount','6869');
+setInterval(()=>{
+    let num = Number(localStorage.getItem('dealCount')) + 1;
+    localStorage.setItem('dealCount', num);
+    dealNum.innerText = num;
+},10000);
+</script>
+</body>
+</html>
