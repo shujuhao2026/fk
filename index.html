@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif;font-size:13px;}
 body{background:#ffffff;}
 .pop-mask{
-    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);
+    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0.5);
     z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;
 }
 .pop-box{
@@ -81,7 +81,7 @@ body{background:#ffffff;}
 .tab-wrap{padding:12px;}
 .tab-head{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(4,1fr);
   gap:10px;
   margin-bottom:12px;
 }
@@ -93,13 +93,45 @@ body{background:#ffffff;}
 .tab-sub{font-size:11px;color:#666;}
 .goods-panel{display:none;}
 .goods-panel.active{display:block;}
-.goods-item{padding:10px;border-bottom:1px solid #eee;cursor:pointer;}
+/* 有图商品：左图右文布局 */
+.goods-item{
+    display:flex;
+    align-items:stretch;
+    gap:10px;
+    padding:10px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+/* 无图商品：保持原始单行样式，不使用flex */
+.goods-item.noimg-goods{
+    display:block;
+}
+/* 左侧图片容器，固定宽度，高度填满item */
+.goods-img-box{
+    width:80px;
+    flex-shrink:0;
+    border-radius:6px;
+    overflow:hidden;
+    background:#f5f5f5;
+}
+.goods-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+/* 右侧文字区域占剩余宽度 */
+.goods-info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
 .goods-name{font-size:13px;margin-bottom:3px;}
 .goods-row{display:flex;justify-content:space-between;}
 .goods-price{color:#f44336;font-size:14px;font-weight:bold;}
 .goods-tag{color:#2962ed;font-size:11px;}
 .goods-tag.soldout{color:#ff5722;font-size:11px;}
-.goods-img{width:100%;height:130px;object-fit:contain;border-radius:6px;margin-bottom:6px;background:#f5f5f5;}
 .form-mask{position:fixed;inset:0;background:rgba(0,0,0.6);display:none;z-index:998;align-items:flex-end;justify-content:center;}
 .form-box{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px;max-width:480px;}
 .form-title{font-size:15px;font-weight:bold;margin-bottom:10px;}
@@ -128,7 +160,7 @@ body{background:#ffffff;}
 .msg-box{background:#fff;padding:16px 14px;border-radius:8px;text-align:center;max-width:260px;width:100%;}
 .msg-title{font-size:15px;font-weight:bold;color:#2578dd;margin-bottom:6px;}
 .msg-text{font-size:11px;color:#666;line-height:1.6;margin-bottom:12px;}
-.msg-close{background:#2578dd;color:#fff;border:none;padding:5px 22px;border-radius:4px;font-size:12px;cursor:pointer;}
+.msg-close{background:#2578dd;color:#fff;border:none;padding:5px 22px;border-radius:4px;font-size:12px;}
 </style>
 </head>
 <body>
@@ -168,14 +200,14 @@ body{background:#ffffff;}
             <img src="https://i.ibb.co/Y72dpgSH/IMG-2520.jpg">
         </div>
         <div class="shop-name">小新『首选高质量💯』</div>
-        <div class="shop-sub">37 商品</div>
+        <div class="shop-sub">44 商品</div>
         <div class="tag-row">
             <span class="tag">官方认证</span>
             <span class="tag">极速售后</span>
             <span class="tag">正品保障</span>
             <span class="tag">全网顶尖</span>
         </div>
-        <div class="shop-data-text"><span id="dealNum">6869</span>成交  保证金45000元</div>
+        <div class="shop-data-text"><span id="dealNum">7562</span>成交  保证金55000元</div>
         <div class="shop-tips">
 ❗️恶意投诉永久拉黑无法购买<br>
 ❗️官方频道@xiaoxinshujuhau<br>
@@ -240,189 +272,409 @@ body{background:#ffffff;}
                 <div class="tab-title">王者数据号👑</div>
                 <div class="tab-sub">2款</div>
             </div>
-            <!-- 新增第八个分类：苹果ID -->
             <div class="tab-item" data-id="tab8" onclick="switchTab('tab8')">
                 <div class="tab-title">苹果ID</div>
                 <div class="tab-sub">5款</div>
             </div>
+            <!-- 新增3个分类 -->
+            <div class="tab-item" data-id="tab9" onclick="switchTab('tab9')">
+                <div class="tab-title">失控进化矿工🎮</div>
+                <div class="tab-sub">4款</div>
+            </div>
+            <div class="tab-item" data-id="tab10" onclick="switchTab('tab10')">
+                <div class="tab-title">三角洲雷达</div>
+                <div class="tab-sub">4款</div>
+            </div>
+            <div class="tab-item" data-id="tab11" onclick="switchTab('tab11')">
+                <div class="tab-title">暗区数据号</div>
+                <div class="tab-sub">4款</div>
+            </div>
         </div>
-        <!-- Telegram -->
+        <!-- Telegram 无图商品，加 noimg-goods -->
         <div class="goods-panel active" id="tab1">
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">盲盒号-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">缺货</span></div>
             </div>
- <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">+234尼日利亚号-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
             </div>
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">+95缅甸号-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
             </div>
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">+254肯尼亚-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存少</span></div>
             </div>
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">+880孟加拉-半年号-包登陆</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存少</span></div>
             </div>
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">+91印度号-包登录</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
             </div>
         </div>
-        <!-- 和平 -->
+        <!-- 和平数据号 全部改为左图，图片链接https://i.ibb.co/BK7xV1B9/IMG-2685.jpg -->
         <div class="goods-panel" id="tab2">
             <div class="goods-item">
-                <div class="goods-name">和平40-80级数据号（无售后）</div>
-                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">䃼货中</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/BK7xV1B9/IMG-2685.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">和平40-80级数据号（无售后）</div>
+                    <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">䃼货中</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <div class="goods-name">『和平数据号』青铜-皇冠----人工验号/包首登</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">库存少</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/BK7xV1B9/IMG-2685.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『和平数据号』青铜-皇冠----人工验号/包首登</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">库存少</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <div class="goods-name">『和平数据号』10级-25级----人工验号/包首登</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">缺货</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/BK7xV1B9/IMG-2685.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『和平数据号』10级-25级----人工验号/包首登</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">缺货</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底2件/可指定1件皮肤</div>
-                <div class="goods-row"><span class="goods-price">¥9</span><span class="goods-tag soldout">缺货</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/BK7xV1B9/IMG-2685.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底2件/可指定1件皮肤</div>
+                    <div class="goods-row"><span class="goods-price">¥9</span><span class="goods-tag soldout">缺货</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底10件/可指定2件皮肤</div>
-                <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余15件</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/BK7xV1B9/IMG-2685.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『和平数据号』25级-40级----人工验号/包首登/红皮保底10件/可指定2件皮肤</div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余15件</span></div>
+                </div>
             </div>
         </div>
-        <!-- Vx扫码 -->
+        <!-- Vx扫码 原有带图，左图右文 -->
         <div class="goods-panel" id="tab3">
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/xSd0044s/IMG-2581.jpg">
-                <div class="goods-name">何平v区扫码号续费卡『只支持续费！月卡』</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/xSd0044s/IMG-2581.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">何平v区扫码号续费卡『只支持续费！月卡』</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/mdmT8jC/IMG-2582.jpg">
-                <div class="goods-name">『何平v区』0级未注册『100%不冻结/月卡』</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/mdmT8jC/IMG-2582.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『何平v区』0级未注册『100%不冻结/月卡』</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/pBzszL4W/IMG-2583.jpg">
-                <div class="goods-name">『何平v区』经典5-15级『100%不冻结/设备黑的强推！月卡』</div>
-                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/pBzszL4W/IMG-2583.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『何平v区』经典5-15级『100%不冻结/设备黑的强推！月卡』</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/nqmHx9zn/IMG-2584.jpg">
-                <div class="goods-name">『何平v区』经典10-20级『100%不冻结/月卡』</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/nqmHx9zn/IMG-2584.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『何平v区』经典10-20级『100%不冻结/月卡』</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
         </div>
-        <!-- QQ直登 -->
+        <!-- QQ直登 原有带图 -->
         <div class="goods-panel" id="tab4">
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
-                <div class="goods-name">Q账密号『何平盲盒-可登营地/带op数据』录屏售后</div>
-                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">剩余3件</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">Q账密号『何平盲盒-可登营地/带op数据』录屏售后</div>
+                    <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">剩余3件</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
-                <div class="goods-name">和平q区直登号经典3级声望10～30(概率千万存款)录屏售后</div>
-                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">和平q区直登号经典3级声望10～30(概率千万存款)录屏售后</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
-                <div class="goods-name">Q账密号『何平3-5级地铁2-9级/建议购买！』录屏售后</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">Q账密号『何平3-5级/建议购买！』录屏售后</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
-                <div class="goods-name">和平地铁直登号声望值6～10级（二百五万存款以上）！！)录屏售后</div>
-                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">和平地铁直登号声望值6～10级（二百五万存款以上）！！)录屏售后</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
-                <div class="goods-name">高质量经典等级25～35（不会黑屋）录屏开一把售后</div>
-                <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余153件</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bRmLh2yb/IMG-2585.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">高质量经典等级25～35（不会黑屋）录屏开一把售后</div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余153件</span></div>
+                </div>
             </div>
         </div>
-        <!-- PUBG -->
+        <!-- PUBG 带图 -->
         <div class="goods-panel" id="tab5">
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
-                <div class="goods-name">【谷歌全球服-盲盒号】-包当天隔离-支持扫码登陆</div>
-                <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">缺货</span></div>
-            </div>
- <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
-                <div class="goods-name">【谷歌全球服-地铁8级-经典5-10级】-包当天隔离，红保1粉保5-支持扫码登陆</div>
-                <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">剩余253件</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">【谷歌全球服-盲盒号】-包当天隔离-支持扫码/邮箱登陆</div>
+                    <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag soldout">缺货</span></div>
+                </div>
             </div>
             <div class="goods-item">
-                <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
-                <div class="goods-name">【谷歌越南服-地铁8级-经典5-10级】-包当天隔离，红保5粉保9-支持扫码登陆</div>
-                <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">【谷歌全球服-地铁8级-经典5-10级】-包当天隔离，红保1粉保5-支持扫码/邮箱登陆</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">剩余253件</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/cc2C5knk/IMG-2587.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">【谷歌越南服-地铁8级-经典5-10级】-包当天隔离，红保5粉保9-支持扫码/邮箱登陆</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                </div>
             </div>
         </div>
-        <!-- 火影数据号 新增 -->
+        <!-- 火影数据号 图片MDvSm79m -->
         <div class="goods-panel" id="tab6">
             <div class="goods-item">
-                <div class="goods-name">『火影忍者』--盲盒</div>
-                <div class="goods-row">
-                    <span class="goods-price">¥2.5</span>
-                    <span class="goods-tag soldout">补货中</span>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/MDvSm79m/IMG-2683.jpg">
                 </div>
-            </div> 
-<div class="goods-item">
-                <div class="goods-name">『火影忍者』--盲盒保底20S</div>
-                <div class="goods-row">
-                    <span class="goods-price">¥9.9</span>
-                    <span class="goods-tag">库存充足</span>
+                <div class="goods-info">
+                    <div class="goods-name">『火影忍者』--盲盒</div>
+                    <div class="goods-row">
+                        <span class="goods-price">¥2.5</span>
+                        <span class="goods-tag soldout">补货中</span>
+                    </div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/MDvSm79m/IMG-2683.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『火影忍者』--盲盒保底20S</div>
+                    <div class="goods-row">
+                        <span class="goods-price">¥9.9</span>
+                        <span class="goods-tag">库存充足</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- 王者数据号 新增 -->
+        <!-- 王者数据号 图片QFZJdcy5 -->
         <div class="goods-panel" id="tab7">
             <div class="goods-item">
-                <div class="goods-name">『王者荣耀』--盲盒</div>
-                <div class="goods-row">
-                    <span class="goods-price">¥2.5</span>
-                    <span class="goods-tag soldout">剩余5件</span>
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/QFZJdcy5/IMG-2684.jpg">
                 </div>
-            </div> 
-<div class="goods-item">
-                <div class="goods-name">『王者荣耀』--3～9V-全英雄/可指定皮肤</div>
-                <div class="goods-row">
-                    <span class="goods-price">¥15</span>
-                    <span class="goods-tag">库存充足</span>
+                <div class="goods-info">
+                    <div class="goods-name">『王者荣耀』--盲盒</div>
+                    <div class="goods-row">
+                        <span class="goods-price">¥2.5</span>
+                        <span class="goods-tag soldout">剩余5件</span>
+                    </div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/QFZJdcy5/IMG-2684.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">『王者荣耀』--3～9V-全英雄/可指定皮肤</div>
+                    <div class="goods-row">
+                        <span class="goods-price">¥15</span>
+                        <span class="goods-tag">库存充足</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- 新增：苹果ID 修复goods-item包裹，文字完全不变 -->
+        <!-- 苹果ID 无图 -->
         <div class="goods-panel" id="tab8">
-           <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">ID盲盒-天卡-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥2.5</span><span class="goods-tag">库存充足</span></div>
             </div>
- <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">台湾ID--年卡「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">剩余342件</span></div>
             </div>
-            <div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">美区ID-年卡-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
             </div>
-<div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">韩国ID-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9</span><span class="goods-tag soldout">缺货</span></div>
             </div>
-<div class="goods-item">
+            <div class="goods-item noimg-goods">
                 <div class="goods-name">缅甸ID-永久-包登录「推荐」</div>
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">剩余153件</span></div>
             </div>
         </div>
+        <!-- 失控进化矿工 tab9 -->
+        <div class="goods-panel" id="tab9">
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/7NVQ6fQm/IMG-2678.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">套餐一：废1000 +（木10000或石10000）+（ 铁5000或硫5000）+（燃2000或布5000） 12小时内</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">缺货</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/7NVQ6fQm/IMG-2678.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">套餐二：废1500 +（木15000或石15000）+（ 铁7000或硫7000）+（燃3500或布7500）12小时内</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存少</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/7NVQ6fQm/IMG-2678.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">套餐三：废10000 +（木50000或石50000）+（ 铁7500或硫7500）+（燃5000或布9000）24小时内</div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">补货中</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/7NVQ6fQm/IMG-2678.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">套餐四：废10000 +（木100000或石100000）+（ 铁50000或硫50000）+（燃10000或布10000）24小时内</div>
+                    <div class="goods-row"><span class="goods-price">¥20</span><span class="goods-tag">库存充足</span></div>
+                </div>
+            </div>
         </div>
+        <!-- 三角洲雷达 tab10 -->
+        <div class="goods-panel" id="tab10">
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bgF6t4qB/IMG-2681.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">物资雷达（1时卡）</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bgF6t4qB/IMG-2681.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">干员雷达（1时卡）</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag soldout">剩余28件</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bgF6t4qB/IMG-2681.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">全雷（2时卡）</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/bgF6t4qB/IMG-2681.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">全雷（天卡）</div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag">库存少</span></div>
+                </div>
+            </div>
+        </div>
+        <!-- 暗区数据号 tab11 -->
+        <div class="goods-panel" id="tab11">
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/4R47ZR18/IMG-2682.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">暗区数据号1～25级</div>
+                    <div class="goods-row"><span class="goods-price">¥8.8</span><span class="goods-tag">库存充足</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/4R47ZR18/IMG-2682.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">暗区数据号25～30级</div>
+                    <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag">库存充足</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/4R47ZR18/IMG-2682.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">暗区数据号30级3～30M刀皮1+</div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余16件</span></div>
+                </div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-img-box">
+                    <img class="goods-img" src="https://i.ibb.co/4R47ZR18/IMG-2682.jpg">
+                </div>
+                <div class="goods-info">
+                    <div class="goods-name">暗区数据号30级30～100M刀皮3+</div>
+                    <div class="goods-row"><span class="goods-price">¥20</span><span class="goods-tag">库存少</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -434,7 +686,8 @@ body{background:#ffffff;}
             <span class="tag2">一件起购</span>
         </div>
         <div class="form-text">
-订单查询：https://shujuhao2026.github.io/cha<br>下单填写正确联系方式，超24小时无售后
+订单查询：https://shujuhao2026.github.io/cha<br>下单填写正确联系方式，超24小时无售后 
+                                 购买失控进化矿工请支付时备注写Q/V区和名称
         </div>
         <form id="myForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
             <input type="hidden" name="_subject" value="店铺订单">
