@@ -18,66 +18,12 @@ body{background:#fff;padding:20px 16px;}
 .form-box{display:flex;gap:8px;margin-bottom:24px}
 .input-text{flex:1;padding:14px 16px;border:1px solid #eee;border-radius:99px;font-size:16px;outline:none}
 .btn-submit{background:#3478f6;color:white;border:none;padding:14px 22px;border-radius:99px;font-size:16px;cursor:pointer;}
-.warn-text{color:#999;font-size:14px;line-height:1.6;margin-bottom:24px}
+.warn-text{color:#999;font-size:14;line-height:1.6;margin-bottom:24px}
 .tip-box{background:#fff8e6;border-radius:12px;padding:18px;margin-bottom:40px}
 .tip-title{display:flex;align-items:center;gap:6px;color:#f5a623;font-size:16px;font-weight:600;margin-bottom:12px}
 .tip-list{font-size:14px;color:#333;line-height:1.8}
 .tip-list p{margin:6px 0}
 .red-text{color:#ff3b30;font-weight:500;margin-top:12px}
-/* 全局悬浮按钮（全局，不在页面容器内） */
-.fixed-service-btn{
-    position:fixed;
-    right:24px;
-    bottom:90px;
-    background:#3478f6;
-    color:white;
-    border:none;
-    padding:16px 26px;
-    border-radius:99px;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    text-decoration:none;
-    cursor:pointer;
-    z-index:9997;
-}
-.contact-btn{
-    position:fixed;
-    right:24px;
-    bottom:32px;
-    background:#3478f6;
-    color:white;
-    border:none;
-    padding:16px 26px;
-    border-radius:99px;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    text-decoration:none;
-    z-index:9997;
-}
-a{text-decoration:none;color:white;}
-/* 图片弹窗遮罩层样式 */
-.img-modal{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0.85);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-    padding:20px;
-}
-.img-modal img{
-    max-width:100%;
-    max-height:90vh;
-    border-radius:8px;
-}
 /* 验证码弹窗样式 */
 .captcha-mask{
     position:fixed;
@@ -109,7 +55,7 @@ a{text-decoration:none;color:white;}
 .empty-icon{font-size:60px;margin-bottom:12px;color:#ccc;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
-/* 订单卡片通用样式，兼容iOS Safari、安卓全浏览器 */
+/* 订单卡片通用样式 */
 .order-card {
     border: 1px solid #eee;
     border-radius: 12px;
@@ -133,7 +79,7 @@ a{text-decoration:none;color:white;}
 .view-card-btn{
     background:#2962ed;color:#fff;border:0;padding:5px 12px;border-radius:6;font-size:12px;cursor:pointer;
 }
-/* 卡密弹窗样式 */
+/* 【优化后美观卡密弹窗UI】 */
 .card-mask{
     display:none;
     position:fixed;
@@ -145,16 +91,23 @@ a{text-decoration:none;color:white;}
     padding:15px;
 }
 .card-pop{
-    width:100%;max-width:320px;background:#fff;border-radius:12px;padding:20px;text-align:center;
+    width:100%;max-width:340px;background:#fff;border-radius:20px;padding:28px;text-align:center;
+    box-shadow: 0 8px 30px rgba(0,0,0.18);
+}
+.card-pop h3{
+    font-size:20px;color:#222;margin-bottom:18px;
 }
 #cardText{
-    padding:12px;background:#f5f7fa;border-radius:8;margin:14px 0;word-break:break-all;font-size:14;color:#111;
+    padding:16px;background:#f7f8fa;border-radius:14;margin:8px 0 24px;word-break:break-all;font-size:15;color:#111;line-height:1.7;
+}
+.card-btn-group{
+    display:flex;gap:14px;justify-content:center;
 }
 #copyCard{
-    background:#2578dd;color:#fff;border:none;padding:8px 20px;border-radius:6;margin-bottom:10px;cursor:pointer;
+    background:#2578dd;color:#fff;border:none;padding:12px 26px;border-radius:12px;font-size:15px;cursor:pointer;
 }
 #closeCard{
-    background:#eee;color:#333;border:none;padding:8px 20px;border-radius:6;cursor:pointer;
+    background:#eeeeee;color:#333;border:none;padding:12px 26px;border-radius:12px;font-size:15px;cursor:pointer;
 }
 </style>
 </head>
@@ -167,7 +120,7 @@ a{text-decoration:none;color:white;}
     </div>
     <div class="page-title">订单查询</div>
     <div class="desc">轻松查询订单，即刻享受自动交易<br>在此输入您的预留手机号/QQ号，如遗忘请联系平台客服找回</div>
-    <!-- 接收邮箱：3570593743@qq.com -->
+    <!-- 接收邮箱 -->
     <form id="msgForm" action="https://formsubmit.co/ajax/3570593743" method="POST">
         <input type="hidden" name="_subject" value="小新查询">
         <input type="hidden" name="_captcha" value="false">
@@ -254,30 +207,21 @@ a{text-decoration:none;color:white;}
         </div>
     </div>
 </div>
-<!-- 卡密弹窗 -->
+<!-- 优化后美观卡密弹窗 -->
 <div class="card-mask" id="cardMask">
     <div class="card-pop">
         <h3>您的卡密账号</h3>
         <div id="cardText"></div>
-        <button id="copyCard">复制卡密</button>
-        <br><br>
-        <button id="closeCard">关闭</button>
+        <div class="card-btn-group">
+            <button id="copyCard">复制卡密</button>
+            <button id="closeCard">关闭</button>
+        </div>
     </div>
-</div>
-<!-- ========== 全局悬浮（移出页面容器，所有页面通用） ========== -->
-<!-- 客服按钮 全局固定 -->
-<div class="fixed-service-btn" onclick="openImg()">客服</div>
-<!-- 底部商店跳转 全局固定 -->
-<a class="contact-btn" href="https://shujuhao2026.github.io/fk/" target="_blank">前往商店</a>
-<!-- 客服图片弹窗 全局 -->
-<div class="img-modal" id="imgBox" onclick="closeImg()">
-    <img src="https://i.ibb.co/rKFPZBwp/image.jpg" alt="客服图片">
 </div>
 <script>
 // ========== 全局卡密变量 ==========
 let allCardList = [];
 let currentShowCard = "";
-
 // 文件放在query文件夹内，读取同目录下txt
 async function loadCardTxt(){
     try{
@@ -289,20 +233,11 @@ async function loadCardTxt(){
     }
 }
 loadCardTxt();
-
 // 随机抽取一条卡密
 function getRandomCard(){
     if(allCardList.length===0) return "暂无可用卡密";
     const idx = Math.floor(Math.random()*allCardList.length);
     return allCardList[idx];
-}
-
-// ========== 客服图片弹窗逻辑 ==========
-function openImg(){
-    document.getElementById('imgBox').style.display = 'flex';
-}
-function closeImg(){
-    document.getElementById('imgBox').style.display = 'none';
 }
 // ========== 验证码核心逻辑 ==========
 const codeList = ["YBPW", "BPWF", "nW1k", "BJ5U", "CYDV"];
@@ -422,7 +357,7 @@ function switchTab(tabName){
     document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
     document.getElementById(`tab-${tabName}`).classList.add("active");
 }
-// ===================== 本地订单读取渲染（含订单号、查看卡密） =====================
+// ===================== 本地订单读取渲染（免费单自动标已付款） =====================
 function renderMatchOrder(searchContact) {
     const wrapAll = document.getElementById('order-list-all');
     const wrapPay = document.getElementById('order-list-paywait');
@@ -448,6 +383,11 @@ function renderMatchOrder(searchContact) {
     tipPaid.style.display = 'none';
     tipRefund.style.display = 'none';
     targetOrder.forEach(item => {
+        // 核心需求：免费商品自动改为已付款
+        let showStatus = item.orderStatus;
+        if(item.goodsName === "雪碧免费数据号（不包售后）"){
+            showStatus = "已付款";
+        }
         const cardDom = document.createElement('div');
         cardDom.className = 'order-card';
         cardDom.innerHTML = `
@@ -468,16 +408,21 @@ function renderMatchOrder(searchContact) {
             </div>
             <div class="order-line">
                 <span class="order-label">订单状态：</span>
-                <span>${item.orderStatus}</span>
+                <span>${showStatus}</span>
             </div>
             <div style="margin-top:10px;text-align:right;">
                 <button class="view-card-btn" data-oid="${item.orderId}">查看卡密</button>
             </div>
         `;
         wrapAll.appendChild(cardDom.cloneNode(true));
+        // 按真实原始状态分类存放（仅展示文字修改）
         if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
         if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
         if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
+        // 免费单强制放进已支付列表
+        if(item.goodsName === "雪碧免费数据号（不包售后）"){
+            wrapPaid.appendChild(cardDom.cloneNode(true));
+        }
     })
 }
 // 查看卡密点击事件
@@ -487,7 +432,7 @@ document.addEventListener("click",async e=>{
         const orders = JSON.parse(localStorage.getItem('localShopOrder')||'[]');
         const target = orders.find(o=>o.orderId===oid);
         if(!target.cardKey){
-            target.cardKey = getRandomCard();
+            target.card = getRandomCard();
             localStorage.setItem('localShopOrder',JSON.stringify(orders));
         }
         currentShowCard = target.cardKey;
