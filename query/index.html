@@ -45,7 +45,7 @@ body{background:#fff;padding:20px 16px;}
 .pop-input{width:100%;padding:14px 12px;border:1px solid #eee;border-radius:10px;font-size:16px;margin-bottom:10px;outline:none;}
 .err-tip{color:red;text-align:center;height:22px;margin-bottom:12px;}
 .pop-buttons{display:flex;gap:12px;margin-top:10px;}
-.btn-cancel{flex:1;padding:14px;border:0;background:#f2f2f2;border-radius:12px;font-size:17px;cursor:pointer;}
+.btn-cancel{flex:1;padding:14px;border:0;background:#f2f2;border-radius:12px;font-size:17px;cursor:pointer;}
 .btn-confirm{flex:1;padding:14px;border:0;background:#3478f6;color:#fff;border-radius:12px;font-size:17px;}
 /* 订单页面标签样式 */
 .tab-wrap{display:flex;border-bottom:1px solid #eee;margin:40px 0 120px;}
@@ -79,35 +79,112 @@ body{background:#fff;padding:20px 16px;}
 .view-card-btn{
     background:#2962ed;color:#fff;border:0;padding:5px 12px;border-radius:6;font-size:12px;cursor:pointer;
 }
-/* 【优化后美观卡密弹窗UI】 */
-.card-mask{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0.7);
-    z-index:1002;
+/* ====== 新增订单卡密详情页样式（你提供的UI）====== */
+.page-card{background:#f5f5f7 !important;padding:0 0 40px 0;}
+.card-header{
+    display:flex;
     align-items:center;
-    justify-content:center;
-    padding:15px;
+    padding:16px;
+    background:#ffffff;
 }
-.card-pop{
-    width:100%;max-width:340px;background:#fff;border-radius:20px;padding:28px;text-align:center;
-    box-shadow: 0 8px 30px rgba(0,0,0.18);
+.card-back{
+    font-size:22px;
+    cursor:pointer;
+    width:32px;
 }
-.card-pop h3{
-    font-size:20px;color:#222;margin-bottom:18px;
+.card-h-title{
+    flex:1;
+    text-align:center;
+    font-size:19px;
+    font-weight:600;
+    margin-right:32px;
 }
-#cardText{
-    padding:16px;background:#f7f8fa;border-radius:14;margin:8px 0 24px;word-break:break-all;font-size:15;color:#111;line-height:1.7;
+.wrap{padding:16px;max-width:750px;margin:0 auto;}
+.order-info-card{
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
 }
-.card-btn-group{
-    display:flex;gap:14px;justify-content:center;
+.card-title{
+    display:flex;
+    align-items:center;
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:16px;
+    gap:6px;
 }
-#copyCard{
-    background:#2578dd;color:#fff;border:none;padding:12px 26px;border-radius:12px;font-size:15px;cursor:pointer;
+.order-row{
+    display:flex;
+    margin:12px 0;
+    font-size:16px;
+    line-height:1.6;
 }
-#closeCard{
-    background:#eeeeee;color:#333;border:none;padding:12px 26px;border-radius:12px;font-size:15px;cursor:pointer;
+.label{
+    color:#777;
+    width:96px;
+}
+.status-tag{
+    display:inline-block;
+    background:#27b956;
+    color:#fff;
+    padding:3px 10px;
+    border-radius:6px;
+}
+.card-block{
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+}
+.card-block-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+}
+.card-block-title{
+    display:flex;
+    align-items:center;
+    font-size:17px;
+    font-weight:600;
+    gap:6px;
+}
+.btn-group{
+    display:flex;
+    gap:10px;
+}
+.btn-blue-outline{
+    border:1px solid #2578ed;
+    color:#2578ed;
+    background:#fff;
+    border-radius:7px;
+    padding:6px 14px;
+    font-size:15px;
+}
+.btn-text{
+    background:none;
+    border:none;
+    color:#2578ed;
+    font-size:15px;
+}
+.single-card{
+    background:#f7f8fa;
+    border-radius:12px;
+    padding:16px;
+    position:relative;
+}
+.single-card-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-size:16px;
+    font-weight:500;
+}
+.card-content{
+    font-size:15px;
+    color:#222;
+    line-height:1.7;
+    word-break:break-all;
 }
 </style>
 </head>
@@ -141,7 +218,7 @@ body{background:#fff;padding:20px 16px;}
             <p>4. 卡密或软件有问题，卖家不售后</p>
             <p>5. 购买的商品为实物，需要快递发货</p>
             <p>6. 通过扫描他人给予的二维码进行支付的</p>
-            <p>7. 卡密内容为"联系XX取/发货/服务"、"付款成功，等待充值"</p>
+            <p>7. 卡密内容为"联系XX取/发货/服务"</p>
             <p>8. 以各种理由推脱到第二天</p>
             <div class="red-text">遇到以上或售后问题，请及时联系平台</div>
         </div>
@@ -192,6 +269,58 @@ body{background:#fff;padding:20px 16px;}
         <div id="order-list-refund"></div>
     </div>
 </div>
+<!-- 页面3：独立订单卡密详情（你的目标UI，弹窗彻底删除） -->
+<div class="page page-card" id="page3">
+    <div class="card-header">
+        <div class="card-back" onclick="goPage(2)">&lt;</div>
+        <div class="card-h-title">订单卡密</div>
+    </div>
+    <div class="wrap">
+        <div class="order-info-card">
+            <div class="card-title">📃 订单信息</div>
+            <div class="order-row">
+                <div class="label">订单号:</div>
+                <div id="showOrderId"></div>
+            </div>
+            <div class="order-row">
+                <div class="label">创建时间:</div>
+                <div id="showCreateTime"></div>
+            </div>
+            <div class="order-row">
+                <div class="label">商品名称:</div>
+                <div id="showGoodsName"></div>
+            </div>
+            <div class="order-row">
+                <div class="label">订单金额:</div>
+                <div id="showPrice"></div>
+            </div>
+            <div class="order-row">
+                <div class="label">数量:</div>
+                <div>1</div>
+            </div>
+            <div class="order-row">
+                <div class="label">订单状态:</div>
+                <div><span class="status-tag">已付款</span></div>
+            </div>
+        </div>
+        <div class="card-block">
+            <div class="card-block-head">
+                <div class="card-block-title">💳 您购买的卡密 1张,已发货 1张</div>
+                <div class="btn-group">
+                    <button class="btn-blue-outline" id="copyAll">一键复制</button>
+                    <button class="btn-text" id="exportBtn">导出卡密</button>
+                </div>
+            </div>
+            <div class="single-card">
+                <div class="single-card-header">
+                    <span>第1张</span>
+                    <button class="btn-text copy-single">复制</button>
+                </div>
+                <div class="card-content" id="showCardText"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- 图形验证码弹窗 -->
 <div class="captcha-mask" id="captchaMask">
     <div class="captcha-pop">
@@ -207,21 +336,11 @@ body{background:#fff;padding:20px 16px;}
         </div>
     </div>
 </div>
-<!-- 优化后美观卡密弹窗 -->
-<div class="card-mask" id="cardMask">
-    <div class="card-pop">
-        <h3>您的卡密账号</h3>
-        <div id="cardText"></div>
-        <div class="card-btn-group">
-            <button id="copyCard">复制卡密</button>
-            <button id="closeCard">关闭</button>
-        </div>
-    </div>
-</div>
 <script>
 // ========== 全局卡密变量 ==========
 let allCardList = [];
 let currentShowCard = "";
+let currentOrderData = null;
 // 文件放在query文件夹内，读取同目录下txt
 async function loadCardTxt(){
     try{
@@ -239,7 +358,7 @@ function getRandomCard(){
     const idx = Math.floor(Math.random()*allCardList.length);
     return allCardList[idx];
 }
-// ========== 验证码核心逻辑 ==========
+// ========== 验证码核心逻辑（修复画布报错） ==========
 const codeList = ["YBPW", "BPWF", "nW1k", "BJ5U", "CYDV"];
 let currentCode = "";
 const canvas = document.getElementById("captchaCanvas");
@@ -298,7 +417,7 @@ function openCaptcha(){
         return;
     }
     document.getElementById("captchaMask").classList.add("show");
-    refreshCaptcha();
+    setTimeout(refreshCaptcha, 100);
 }
 // 关闭验证码弹窗
 function closeCaptcha(){
@@ -383,7 +502,7 @@ function renderMatchOrder(searchContact) {
     tipPaid.style.display = 'none';
     tipRefund.style.display = 'none';
     targetOrder.forEach(item => {
-        // 核心需求：免费商品自动改为已付款
+        // 核心需求：免费商品展示文字改为已付款
         let showStatus = item.orderStatus;
         if(item.goodsName === "雪碧免费数据号（不包售后）"){
             showStatus = "已付款";
@@ -400,10 +519,6 @@ function renderMatchOrder(searchContact) {
                 <span>${item.goodsName}</span>
             </div>
             <div class="order-line">
-                <span class="order-label">下单时间：</span>
-                <span>${item.createTime}</span>
-            </div>
-            <div class="order-line">
                 <span class="order-price">¥${item.price}</span>
             </div>
             <div class="order-line">
@@ -415,17 +530,17 @@ function renderMatchOrder(searchContact) {
             </div>
         `;
         wrapAll.appendChild(cardDom.cloneNode(true));
-        // 按真实原始状态分类存放（仅展示文字修改）
+        // 按原始状态分类
         if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
         if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
         if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
-        // 免费单强制放进已支付列表
+        // 免费单强制放入已支付列表
         if(item.goodsName === "雪碧免费数据号（不包售后）"){
             wrapPaid.appendChild(cardDom.cloneNode(true));
         }
     })
 }
-// 查看卡密点击事件
+// 点击查看卡 → 切换page3，填充订单全部信息
 document.addEventListener("click",async e=>{
     if(e.target.classList.contains("view-card-btn")){
         const oid = e.target.dataset.oid;
@@ -435,27 +550,33 @@ document.addEventListener("click",async e=>{
             target.card = getRandomCard();
             localStorage.setItem('localShopOrder',JSON.stringify(orders));
         }
-        currentShowCard = target.cardKey;
-        document.getElementById('cardText').innerText = currentShowCard;
-        document.getElementById('cardMask').style.display = "flex";
+        currentOrderData = target;
+        // 填充详情页面数据
+        document.getElementById('showOrderId').innerText = target.orderId;
+        document.getElementById('showCreateTime').innerText = target.createTime;
+        document.getElementById('showGoodsName').innerText = target.goodsName;
+        document.getElementById('showPrice').innerText = "¥"+target.price;
+        document.getElementById('showCardText').innerText = target.cardKey;
+        goPage(3);
     }
 })
-// 关闭卡密弹窗
-document.getElementById('closeCard').onclick = ()=>{
-    document.getElementById('cardMask').style.display = "none";
+// 单条复制卡密
+document.querySelector('.copy-single').onclick = async ()=>{
+    const text = document.getElementById('showCardText').innerText.trim();
+    await navigator.clipboard.writeText(text);
+    alert("复制成功");
 }
-// 点击遮罩关闭
-document.getElementById('cardMask').onclick = e=>{
-    if(e.target.id === "cardMask") document.getElementById('cardMask').style.display = "none";
+// 一键复制全部
+document.getElementById('copyAll').onclick = async ()=>{
+    const text = document.getElementById('showCardText').innerText.trim();
+    await navigator.clipboard.writeText(text);
+    alert("全部复制成功");
 }
-// 复制卡密
-document.getElementById('copyCard').onclick = async ()=>{
-    try{
-        await navigator.clipboard.writeText(currentShowCard);
-        alert("卡密复制成功！");
-    }catch(err){
-        alert("复制失败，长按文字手动复制");
-    }
+// 导出=全部复制
+document.getElementById('exportBtn').onclick = async ()=>{
+    const text = document.getElementById('showCardText').innerText.trim();
+    await navigator.clipboard.writeText(text);
+    alert("卡密已复制，可粘贴保存");
 }
 </script>
 </body>
