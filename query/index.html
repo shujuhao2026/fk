@@ -1,1 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单查询</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
+body{background:#fff;padding:20px 16px;}
+/* 页面切换容器 */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.back{font-size:22px;cursor:pointer;}
+.title{font-size:18px;font-weight:600;flex:1;text-align:center;margin-right:30px}
+.page-title{font-size:32px;font-weight:bold;text-align:center;margin-bottom:16px;line-height:1.3}
+.desc{text-align:center;color:#999;font-size:15px;margin-bottom:40px;line-height:1.5}
+.form-box{display:flex;gap:8px;margin-bottom:24px}
+.input-text{flex:1;padding:14px 16px;border:1px solid #eee;border-radius:99px;font-size:16px;outline:none}
+.btn-submit{background:#3478f6;color:white;border:none;padding:14px 22px;border-radius:99px;font-size:16px;cursor:pointer;}
+.warn-text{color:#999;font-size:14px;line-height:1.6;margin-bottom:24px}
+.tip-box{background:#fff8e6;border-radius:12px;padding:18px;margin-bottom:40px}
+.tip-title{display:flex;align-items:center;gap:6px;color:#f5a623;font-size:16px;font-weight:600;margin-bottom:12px}
+.tip-list{font-size:14px;color:#333;line-height:1.8}
+.tip-list p{margin:6px 0}
+.red-text{color:#ff3b30;font-weight:500;margin-top:12px}
+/* 全局悬浮按钮（全局，不在页面容器内） */
+.fixed-service-btn{
+    position:fixed;
+    right:24px;
+    bottom:90px;
+    background:#3478f6;
+    color:white;
+    border:none;
+    padding:16px 26px;
+    border-radius:99px;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+    cursor:pointer;
+    z-index:9997;
+}
+.contact-btn{
+    position:fixed;
+    right:24px;
+    bottom:32px;
+    background:#3478f6;
+    color:white;
+    border:none;
+    padding:16px 26px;
+    border-radius:99px;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+    z-index:9997;
+}
+a{text-decoration:none;color:white;}
+/* 图片弹窗遮罩层样式 */
+.img-modal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.85);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    padding:20px;
+}
+.img-modal img{
+    max-width:100%;
+    max-height:90vh;
+    border-radius:8px;
+}
+/* 验证码弹窗样式 */
+.captcha-mask{
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:9998;
+}
+.captcha-mask.show{display:flex;}
+.captcha-pop{
+    background:#fff;border-radius:16px;width:100%;max-width:360px;padding:24px;
+}
+.pop-title{text-align:center;font-size:20px;font-weight:bold;margin-bottom:20px;}
+.canvas-wrap{text-align:center;margin-bottom:16px;}
+#captchaCanvas{border:1px solid #ddd;border-radius:8px;}
+.pop-input{width:100%;padding:14px 12px;border:1px solid #eee;border-radius:10px;font-size:16px;margin-bottom:10px;outline:none;}
+.err-tip{color:red;text-align:center;height:22px;margin-bottom:12px;}
+.pop-buttons{display:flex;gap:12px;margin-top:10px;}
+.btn-cancel{flex:1;padding:14px;border:0;background:#f2f2f2;border-radius:12px;font-size:17px;cursor:pointer;}
+.btn-confirm{flex:1;padding:14px;border:0;background:#3478f6;color:#fff;border-radius:12px;font-size:17px;}
+/* 订单页面标签样式 */
+.tab-wrap{display:flex;border-bottom:1px solid #eee;margin:40px 0 120px;}
+.tab-item{flex:1;text-align:center;padding:14px;font-size:17px;cursor:pointer;}
+.tab-item.active{font-weight:bold;border-bottom:2px solid #000;}
+.empty-box{text-align:center;color:#999;}
+.empty-icon{font-size:60px;margin-bottom:12px;color:#ccc;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+/* 订单卡片通用样式，兼容iOS Safari、安卓全浏览器 */
+.order-card {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px 8px 14px;
+    background: #fff;
+}
+.order-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    line-height: 2;
+}
+.order-label {
+    color: #666;
+}
+.order-price {
+    color: #f44336;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<!-- 背景音乐 -->
+<audio id="bgMusic" loop hidden preload="auto">
+    <source src="wurenzhidao.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放
+</audio>
 
+<!-- 页面1：订单查询首页 -->
+<div class="page active" id="page1">
+    <div class="top-bar">
+        <div class="back">×</div>
+        <div class="title">数据号</div>
+    </div>
+    <div class="page-title">订单查询</div>
+    <div class="desc">轻松查询订单，即刻享受自动交易<br>在此输入您的预留手机号/QQ号，如遗忘请联系平台客服找回</div>
+    <!-- 接收邮箱：3570593743@qq.com -->
+    <form id="msgForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
+        <input type="hidden" name="_subject" value="小新查询">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-box">
+            <input id="contactInput" name="message" class="input-text" placeholder="请输入预留手机号/QQ号" required>
+            <button type="button" class="btn-submit" onclick="openCaptcha()">查询订单</button>
+        </div>
+    </form>
+    <div class="warn-text">
+⚠️ 免责声明：卖家次日可在本平台申请提现，因此如果您对订单存在疑惑，请在24小时内向平台客服反馈，逾期请自行与卖家协商解决。
+    </div>
+    <div class="tip-box">
+        <div class="tip-title">⚠️ 温馨提示</div>
+        <div class="tip-list">
+            <p>1. 承诺充值返现</p>
+            <p>2. 虚假卡密、过期卡密</p>
+            <p>3. 卡密无意义，仅为提示作用</p>
+            <p>4. 卡密或软件有问题，卖家不售后</p>
+            <p>5. 购买的商品为实物，需要快递发货</p>
+            <p>6. 通过扫描他人给予的二维码进行支付的</p>
+            <p>7. 卡密内容为"联系XX取/发货/服务"、"付款成功，等待充值"</p>
+            <p>8. 以各种理由推脱到第二天</p>
+            <div class="red-text">遇到以上或售后问题，请及时联系平台</div>
+        </div>
+    </div>
+</div>
+
+<!-- 页面2：我的订单标签页 -->
+<div class="page" id="page2">
+    <div class="top-bar">
+        <div class="back" onclick="location.href='../'">&lt;</div>
+        <div class="title">我的订单</div>
+    </div>
+    <div class="tab-wrap">
+        <div class="tab-item active" data-tab="all" onclick="switchTab('all')">全部</div>
+        <div class="tab-item" data-tab="paywait" onclick="switchTab('paywait')">待付款</div>
+        <div class="tab-item" data-tab="paid" onclick="switchTab('paid')">已支付</div>
+        <div class="tab-item" data-tab="refund" onclick="switchTab('refund')">已退款</div>
+    </div>
+    <!-- 全部订单 -->
+    <div class="tab-content active" id="tab-all">
+        <div class="empty-box" id="empty-all">
+            <div class="empty-icon">📄</div>
+            <div>暂无订单数据</div>
+        </div>
+        <div id="order-list-all"></div>
+    </div>
+    <!-- 待付款 -->
+    <div class="tab-content" id="tab-paywait">
+        <div class="empty-box" id="empty-paywait">
+            <div class="empty-icon">📄</div>
+            <div>暂无待付款订单</div>
+        </div>
+        <div id="order-list-paywait"></div>
+    </div>
+    <!-- 已支付 -->
+    <div class="tab-content" id="tab-paid">
+        <div class="empty-box" id="empty-paid">
+            <div class="empty-icon">📄</div>
+            <div>暂无已支付订单</div>
+        </div>
+        <div id="order-list-paid"></div>
+    </div>
+    <!-- 已退款 -->
+    <div class="tab-content" id="tab-refund">
+        <div class="empty-box" id="empty-refund">
+            <div class="empty-icon">📄</div>
+            <div>暂无退款订单</div>
+        </div>
+        <div id="order-list-refund"></div>
+    </div>
+</div>
+
+<!-- 图形验证码弹窗 -->
+<div class="captcha-mask" id="captchaMask">
+    <div class="captcha-pop">
+        <div class="pop-title">请输入图形验证码</div>
+        <div class="canvas-wrap">
+            <canvas id="captchaCanvas" width="240" height="90"></canvas>
+        </div>
+        <div class="err-tip" id="errTip"></div>
+        <input class="pop-input" id="codeInput" placeholder="输入图片上的验证码">
+        <div class="pop-buttons">
+            <button class="btn-cancel" onclick="closeCaptcha()">取消</button>
+            <button class="btn-confirm" onclick="checkCode()">确认验证</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 全局悬浮（移出页面容器，所有页面通用） ========== -->
+<!-- 客服按钮 全局固定 -->
+<div class="fixed-service-btn" onclick="openImg()">客服</div>
+<!-- 底部商店跳转 全局固定 -->
+<a class="contact-btn" href="https://shujuhao2026.github.io/fk/" target="_blank">前往商店</a>
+<!-- 客服图片弹窗 全局 -->
+<div class="img-modal" id="imgBox" onclick="closeImg()">
+    <img src="https://i.ibb.co/rKFPZBwp/image.jpg" alt="客服图片">
+</div>
+
+<script>
+// ========== 原有背景音乐逻辑 ==========
+let hasPlay = false;
+const audio = document.getElementById('bgMusic');
+audio.addEventListener('error', function() {
+    console.log('音频加载失败，不影响页面使用');
+});
+document.body.addEventListener('click', playAudioOnce);
+document.body.addEventListener('touchstart', playAudioOnce);
+function playAudioOnce(){
+    if(!hasPlay){
+        audio.play().catch(()=>{});
+        hasPlay = true;
+        document.body.removeEventListener('click', playAudioOnce);
+        document.body.removeEventListener('touchstart', playAudioOnce);
+    }
+}
+
+// ========== 客服图片弹窗逻辑 ==========
+function openImg(){
+    document.getElementById('imgBox').style.display = 'flex';
+}
+function closeImg(){
+    document.getElementById('imgBox').style.display = 'none';
+}
+
+// ========== 验证码核心逻辑 ==========
+const codeList = ["YBPW", "BPWF", "nW1k", "BJ5U", "CYDV"];
+let currentCode = "";
+const canvas = document.getElementById("captchaCanvas");
+const ctx = canvas.getContext("2d");
+
+// 绘制验证码画布
+function drawCode(text){
+    ctx.clearRect(0,0,240,90);
+    ctx.fillStyle="#f8f8f8";
+    ctx.fillRect(0,0,240,90);
+    // 干扰线条
+    for(let i=0;i<6;i++){
+        ctx.strokeStyle=randColor();
+        ctx.beginPath();
+        ctx.moveTo(Math.random()*240,Math.random()*90);
+        ctx.lineTo(Math.random()*240,Math.random()*90);
+        ctx.stroke();
+    }
+    // 绘制字符
+    ctx.font="bold 46px Arial";
+    ctx.textBaseline="middle";
+    for(let i=0;i<text.length;i++){
+        ctx.fillStyle=randColor();
+        let deg = (Math.random()-0.5)*0.4;
+        ctx.save();
+        ctx.translate(30+i*45,45);
+        ctx.rotate(deg);
+        ctx.fillText(text[i],0,0);
+        ctx.restore();
+    }
+}
+// 随机干扰色
+function randColor(){
+    let r=Math.floor(Math.random()*80+40);
+    let g=Math.floor(Math.random()*80+40);
+    let b=Math.floor(Math.random()*120+40);
+    return `rgb(${r},${g},${b})`;
+}
+// 刷新新验证码
+function refreshCaptcha(){
+    let idx = Math.floor(Math.random() * codeList.length);
+    currentCode = codeList[idx];
+    drawCode(currentCode);
+    document.getElementById("errTip").innerText = "";
+    document.getElementById("codeInput").value = "";
+}
+// 打开验证码弹窗（修复JS语法报错）
+function openCaptcha(){
+    const inputVal = document.getElementById("contactInput").value.trim();
+    if(!inputVal){
+        alert("请先输入手机号/QQ号");
+        return;
+    }
+    const reg = /^\d{10,11}$/;
+    if(!reg.test(inputVal)){
+        alert("联系方式填写错误，请输入正确联系方式");
+        return;
+    }
+    document.getElementById("captchaMask").classList.add("show");
+    refreshCaptcha();
+}
+// 关闭验证码弹窗
+function closeCaptcha(){
+    document.getElementById("captchaMask").classList.remove("show");
+}
+
+// 表单提交函数
+async function submitFormData(){
+    const form = document.getElementById('msgForm');
+    const inputVal = document.getElementById("contactInput").value.trim();
+    try{
+        const res = await fetch(form.action,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                message: inputVal,
+                _subject: "小新查询",
+                _captcha: "false"
+            })
+        })
+        const data = await res.json();
+        if(data.success){
+            console.log("留言发送成功，等待邮箱接收");
+        }else{
+            console.log("发送失败，接口返回异常");
+        }
+    }catch(err){
+        console.log("网络跨域/请求失败：",err);
+        alert("网络异常，留言提交失败，切换流量重试");
+    }
+}
+
+// 校验验证码
+function checkCode(){
+    const input = document.getElementById("codeInput").value.trim().toLowerCase();
+    const right = currentCode.toLowerCase();
+    if(input !== right){
+        document.getElementById("errTip").innerText = "验证码错误，请重新输入";
+        refreshCaptcha();
+        return;
+    }
+    closeCaptcha();
+    submitFormData();
+    goPage(2);
+}
+
+// ========== 页面切换函数 ==========
+function goPage(pageNum){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(`page${pageNum}`).classList.add("active");
+}
+
+// ========== 订单Tab标签切换 ==========
+function switchTab(tabName){
+    document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
+    document.querySelector(`.tab-item[data-tab="${tabName}"]`).classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+}
+// ===================== 新增：本地订单读取渲染（全手机兼容） =====================
+// 根据输入的QQ/手机号筛选本地订单并渲染页面
+function renderMatchOrder(searchContact) {
+    // 获取四个订单容器
+    const wrapAll = document.getElementById('order-list-all');
+    const wrapPay = document.getElementById('order-list-paywait');
+    const wrapPaid = document.getElementById('order-list-paid');
+    const wrapRefund = document.getElementById('order-list-refund');
+    // 获取四个空白提示框
+    const tipAll = document.getElementById('empty-all');
+    const tipPay = document.getElementById('empty-paywait');
+    const tipPaid = document.getElementById('empty-paid');
+    const tipRefund = document.getElementById('empty-refund');
+
+    // 清空上次渲染的订单
+    wrapAll.innerHTML = '';
+    wrapPay.innerHTML = '';
+    wrapPaid.innerHTML = '';
+    wrapRefund.innerHTML = '';
+    // 默认显示空白提示
+    tipAll.style.display = 'flex';
+    tipPay.style.display = 'flex';
+    tipPaid.style.display = 'flex';
+    tipRefund.style.display = 'flex';
+
+    // 读取本地存储的全部订单
+    let allOrderData = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
+    // 筛选和输入联系方式一致的订单（免费号也会匹配）
+    const targetOrder = allOrderData.filter(item => item.phoneQQ === searchContact);
+    if (targetOrder.length === 0) return;
+
+    // 存在订单，隐藏空白文字提示
+    tipAll.style.display = 'none';
+    tipPay.style.display = 'none';
+    tipPaid.style.display = 'none';
+    tipRefund.style.display = 'none';
+
+    // 循环生成订单卡片
+    targetOrder.forEach(item => {
+        const cardDom = document.createElement('div');
+        cardDom.className = 'order-card';
+        // 订单卡片内容（包含0元免费商品展示）
+        cardDom.innerHTML = `
+            <div class="order-line">
+                <span class="order-label">商品名称：</span>
+                <span>${item.goodsName}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">下单时间：</span>
+                <span>${item.createTime}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">实付金额：</span>
+                <span class="order-price">¥${item.price}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">订单状态：</span>
+                <span>${item.orderStatus}</span>
+            </div>
+        `;
+        // 全部分类都插入卡片
+        wrapAll.appendChild(cardDom.cloneNode(true));
+        // 按状态分到对应标签页
+        if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
+        if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
+        if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
+    })
+}
+
+// 重写验证码验证成功函数，验证通过自动渲染订单
+const originCheckCodeFunc = checkCode;
+function checkCode() {
+    const input = document.getElementById("codeInput").value.trim().toLowerCase();
+    const right = currentCode.toLowerCase();
+    if(input !== right){
+        document.getElementById("errTip").innerText = "验证码错误，请重新输入";
+        refreshCaptcha();
+        return;
+    }
+    closeCaptcha();
+    submitFormData();
+    // 获取用户输入的查询号码，渲染对应订单
+    const searchNum = document.getElementById('contactInput').value.trim();
+    renderMatchOrder(searchNum);
+    goPage(2);
+}
+</script>
+</body>
+</html>
