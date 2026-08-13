@@ -166,8 +166,8 @@ body{background:#ffffff;}
 <body>
 <div class="pop-mask" id="mainPop">
     <div class="pop-box">
+        <span class="pop-close-x" onclick="closePop()">✕</span>
         <div class="pop-top">
-            <span class="pop-close-x" onclick="closePop()">✕</span>
             <h2>「7x24」小时自动发货</h2>
             <div class="pop-top-desc">选购商品,在线付款 · 系统自动发货</div>
         </div>
@@ -193,14 +193,14 @@ body{background:#ffffff;}
 <div class="page-home" id="homePage">
     <div class="header-shop">
         <div class="header-buttons">
-            <a class="order-btn" href="https://shujuhao2026.github.io/cha/" target="_blank">订单查询</a>
+            <a class="order-btn" href="./query/">订单查询</a>
             <button class="contact-btn">联系TA</button>
         </div>
         <div class="shop-avatar">
             <img src="https://i.ibb.co/pBmrY2vG/IMG-2767.jpg" ">
         </div>
         <div class="shop-name">雪碧『高质量💯』</div>
-        <div class="shop-sub">44 商品</div>
+        <div class="shop-sub">45 商品</div>
         <div class="tag-row">
             <span class="tag">官方认证</span>
             <span class="tag">极速售后</span>
@@ -244,6 +244,11 @@ body{background:#ffffff;}
     <div class="tab-wrap">
         <h2 style="font-size:15px;margin-bottom:10px;">卡密</h2>
         <div class="tab-head">
+            <!-- 新增第1位：免费数据号 -->
+            <div class="tab-item" data-id="tab0" onclick="switchTab('tab0')">
+                <div class="tab-title">雪碧福利号</div>
+                <div class="tab-sub">1款</div>
+            </div>
             <div class="tab-item active" data-id="tab1" onclick="switchTab('tab1')">
                 <div class="tab-title">Telegram账号✈️</div>
                 <div class="tab-sub">6款</div>
@@ -288,6 +293,13 @@ body{background:#ffffff;}
             <div class="tab-item" data-id="tab11" onclick="switchTab('tab11')">
                 <div class="tab-title">暗区数据号</div>
                 <div class="tab-sub">4款</div>
+            </div>
+        </div>
+        <!-- 新增免费数据号面板 -->
+        <div class="goods-panel" id="tab0">
+            <div class="goods-item noimg-goods">
+                <div class="goods-name">雪碧免费数据号（不包售后）</div>
+                <div class="goods-row"><span class="goods-price">¥0.0</span><span class="goods-tag ">库存充足</span></div>
             </div>
         </div>
         <!-- Telegram 无图商品，加 noimg-goods -->
@@ -809,6 +821,61 @@ setInterval(()=>{
     localStorage.setItem('dealCount', num);
     dealNum.innerText = num;
 },10000);
+// ===================== 新增：本地订单存储模块（全手机浏览器兼容） =====================
+// 1. 获取当前点击商品的价格
+function getSelectGoodsPrice(domItem) {
+    let priceText = domItem.querySelector('.goods-price').innerText;
+    // 去除¥符号转数字，兼容0元免费商品
+    return parseFloat(priceText.replace('¥', ''));
+}
+
+// 2. 保存订单到浏览器本地存储 localStorage
+function saveLocalOrder(goodsName, contactInfo, priceNum) {
+    // 读取已有订单，无数据则初始空数组
+    let orderArr = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
+    // 组装订单信息
+    const orderData = {
+        phoneQQ: contactInfo,    // 用户填写的QQ/手机号
+        goodsName: goodsName,    // 购买商品名称（含免费雪碧福利号）
+        price: priceNum,         // 商品价格，0元免费单正常存储
+        createTime: new Date().toLocaleString(), // 下单时间
+        orderStatus: "待付款"    // 默认状态
+    };
+    // 新增订单进数组
+    orderArr.push(orderData);
+    // 重新存入本地存储
+    localStorage.setItem('localShopOrder', JSON.stringify(orderArr));
+}
+
+// 3. 拦截商品点击事件，缓存当前选中商品价格
+let oldGoodsClickFun = allGoods[0].onclick;
+allGoods.forEach(goodsDom => {
+    const originClick = goodsDom.onclick;
+    goodsDom.onclick = function () {
+        originClick();
+        // 全局临时存储当前选中商品价格，下单时读取
+        window.tempSelectPrice = getSelectGoodsPrice(this);
+    }
+})
+
+// 4. 重写下单提交按钮逻辑，表单校验通过后自动保存订单
+const oldSubmitBtnClick = document.getElementById('submitBtn').onclick;
+document.getElementById('submitBtn').onclick = function(e){
+    e.preventDefault();
+    let val = msgInput.value.trim();
+    // 原有校验逻辑完全保留，不修改
+    if(!val){alert("请填写联系方式");return;}
+    if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
+        alert("号码格式错误");
+        return;
+    }
+    // ========== 新增：校验通过，写入本地订单 ==========
+    const currentGoodsName = goodsTitle.innerText;
+    const buyPrice = window.tempSelectPrice ?? 0;
+    saveLocalOrder(currentGoodsName, val, buyPrice);
+    // 原有弹窗逻辑不变
+    warnMask.style.display = 'flex';
+}
 </script>
 </body>
 </html>
