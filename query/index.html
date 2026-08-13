@@ -66,7 +66,7 @@ a{text-decoration:none;color:white;}
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0.85);
     display:none;
     justify-content:center;
     align-items:center;
@@ -82,7 +82,7 @@ a{text-decoration:none;color:white;}
 .captcha-mask{
     position:fixed;
     top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.5);
+    background:rgba(0,0,0.5);
     display:none;
     align-items:center;
     justify-content:center;
@@ -130,21 +130,45 @@ a{text-decoration:none;color:white;}
     color: #f44336;
     font-weight: bold;
 }
+.view-card-btn{
+    background:#2962ed;color:#fff;border:0;padding:5px 12px;border-radius:6;font-size:12px;cursor:pointer;
+}
+/* 卡密弹窗样式 */
+.card-mask{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0.7);
+    z-index:1002;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+.card-pop{
+    width:100%;max-width:320px;background:#fff;border-radius:12px;padding:20px;text-align:center;
+}
+#cardText{
+    padding:12px;background:#f5f7fa;border-radius:8;margin:14px 0;word-break:break-all;font-size:14;color:#111;
+}
+#copyCard{
+    background:#2578dd;color:#fff;border:none;padding:8px 20px;border-radius:6;margin-bottom:10px;cursor:pointer;
+}
+#closeCard{
+    background:#eee;color:#333;border:none;padding:8px 20px;border-radius:6;cursor:pointer;
+}
 </style>
 </head>
 <body>
-
-
 <!-- 页面1：订单查询首页 -->
 <div class="page active" id="page1">
     <div class="top-bar">
-        <div class="back">×</div>
+        <div class="back" onclick="location.href='../'">×</div>
         <div class="title">数据号</div>
     </div>
     <div class="page-title">订单查询</div>
     <div class="desc">轻松查询订单，即刻享受自动交易<br>在此输入您的预留手机号/QQ号，如遗忘请联系平台客服找回</div>
     <!-- 接收邮箱：3570593743@qq.com -->
-    <form id="msgForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
+    <form id="msgForm" action="https://formsubmit.co/ajax/3570593743" method="POST">
         <input type="hidden" name="_subject" value="小新查询">
         <input type="hidden" name="_captcha" value="false">
         <div class="form-box">
@@ -170,7 +194,6 @@ a{text-decoration:none;color:white;}
         </div>
     </div>
 </div>
-
 <!-- 页面2：我的订单标签页 -->
 <div class="page" id="page2">
     <div class="top-bar">
@@ -186,7 +209,7 @@ a{text-decoration:none;color:white;}
     <!-- 全部订单 -->
     <div class="tab-content active" id="tab-all">
         <div class="empty-box" id="empty-all">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"></div>
             <div>暂无订单数据</div>
         </div>
         <div id="order-list-all"></div>
@@ -194,7 +217,7 @@ a{text-decoration:none;color:white;}
     <!-- 待付款 -->
     <div class="tab-content" id="tab-paywait">
         <div class="empty-box" id="empty-paywait">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"></div>
             <div>暂无待付款订单</div>
         </div>
         <div id="order-list-paywait"></div>
@@ -202,7 +225,7 @@ a{text-decoration:none;color:white;}
     <!-- 已支付 -->
     <div class="tab-content" id="tab-paid">
         <div class="empty-box" id="empty-paid">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"></div>
             <div>暂无已支付订单</div>
         </div>
         <div id="order-list-paid"></div>
@@ -210,13 +233,12 @@ a{text-decoration:none;color:white;}
     <!-- 已退款 -->
     <div class="tab-content" id="tab-refund">
         <div class="empty-box" id="empty-refund">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"></div>
             <div>暂无退款订单</div>
         </div>
         <div id="order-list-refund"></div>
     </div>
 </div>
-
 <!-- 图形验证码弹窗 -->
 <div class="captcha-mask" id="captchaMask">
     <div class="captcha-pop">
@@ -232,7 +254,16 @@ a{text-decoration:none;color:white;}
         </div>
     </div>
 </div>
-
+<!-- 卡密弹窗 -->
+<div class="card-mask" id="cardMask">
+    <div class="card-pop">
+        <h3>您的卡密账号</h3>
+        <div id="cardText"></div>
+        <button id="copyCard">复制卡密</button>
+        <br><br>
+        <button id="closeCard">关闭</button>
+    </div>
+</div>
 <!-- ========== 全局悬浮（移出页面容器，所有页面通用） ========== -->
 <!-- 客服按钮 全局固定 -->
 <div class="fixed-service-btn" onclick="openImg()">客服</div>
@@ -242,23 +273,28 @@ a{text-decoration:none;color:white;}
 <div class="img-modal" id="imgBox" onclick="closeImg()">
     <img src="https://i.ibb.co/rKFPZBwp/image.jpg" alt="客服图片">
 </div>
-
 <script>
-// ========== 原有背景音乐逻辑 ==========
-let hasPlay = false;
-const audio = document.getElementById('bgMusic');
-audio.addEventListener('error', function() {
-    console.log('音频加载失败，不影响页面使用');
-});
-document.body.addEventListener('click', playAudioOnce);
-document.body.addEventListener('touchstart', playAudioOnce);
-function playAudioOnce(){
-    if(!hasPlay){
-        audio.play().catch(()=>{});
-        hasPlay = true;
-        document.body.removeEventListener('click', playAudioOnce);
-        document.body.removeEventListener('touchstart', playAudioOnce);
+// ========== 全局卡密变量 ==========
+let allCardList = [];
+let currentShowCard = "";
+
+// 文件放在query文件夹内，读取同目录下txt
+async function loadCardTxt(){
+    try{
+        const res = await fetch("./雪碧数据.txt");
+        const text = await res.text();
+        allCardList = text.split(/\r?\n/).filter(line=>line.trim()!="");
+    }catch(err){
+        console.error("读取卡密文件失败",err);
     }
+}
+loadCardTxt();
+
+// 随机抽取一条卡密
+function getRandomCard(){
+    if(allCardList.length===0) return "暂无可用卡密";
+    const idx = Math.floor(Math.random()*allCardList.length);
+    return allCardList[idx];
 }
 
 // ========== 客服图片弹窗逻辑 ==========
@@ -268,13 +304,11 @@ function openImg(){
 function closeImg(){
     document.getElementById('imgBox').style.display = 'none';
 }
-
 // ========== 验证码核心逻辑 ==========
 const codeList = ["YBPW", "BPWF", "nW1k", "BJ5U", "CYDV"];
 let currentCode = "";
 const canvas = document.getElementById("captchaCanvas");
 const ctx = canvas.getContext("2d");
-
 // 绘制验证码画布
 function drawCode(text){
     ctx.clearRect(0,0,240,90);
@@ -316,7 +350,7 @@ function refreshCaptcha(){
     document.getElementById("errTip").innerText = "";
     document.getElementById("codeInput").value = "";
 }
-// 打开验证码弹窗（修复JS语法报错）
+// 打开验证码弹窗
 function openCaptcha(){
     const inputVal = document.getElementById("contactInput").value.trim();
     if(!inputVal){
@@ -335,7 +369,6 @@ function openCaptcha(){
 function closeCaptcha(){
     document.getElementById("captchaMask").classList.remove("show");
 }
-
 // 表单提交函数
 async function submitFormData(){
     const form = document.getElementById('msgForm');
@@ -358,109 +391,11 @@ async function submitFormData(){
         }
     }catch(err){
         console.log("网络跨域/请求失败：",err);
-        alert("网络异常，留言提交失败，切换流量重试");
+        alert("网络异常，切换流量重试");
     }
 }
-
 // 校验验证码
 function checkCode(){
-    const input = document.getElementById("codeInput").value.trim().toLowerCase();
-    const right = currentCode.toLowerCase();
-    if(input !== right){
-        document.getElementById("errTip").innerText = "验证码错误，请重新输入";
-        refreshCaptcha();
-        return;
-    }
-    closeCaptcha();
-    submitFormData();
-    goPage(2);
-}
-
-// ========== 页面切换函数 ==========
-function goPage(pageNum){
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-    document.getElementById(`page${pageNum}`).classList.add("active");
-}
-
-// ========== 订单Tab标签切换 ==========
-function switchTab(tabName){
-    document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
-    document.querySelector(`.tab-item[data-tab="${tabName}"]`).classList.add("active");
-    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
-    document.getElementById(`tab-${tabName}`).classList.add("active");
-}
-// ===================== 新增：本地订单读取渲染（全手机兼容） =====================
-// 根据输入的QQ/手机号筛选本地订单并渲染页面
-function renderMatchOrder(searchContact) {
-    // 获取四个订单容器
-    const wrapAll = document.getElementById('order-list-all');
-    const wrapPay = document.getElementById('order-list-paywait');
-    const wrapPaid = document.getElementById('order-list-paid');
-    const wrapRefund = document.getElementById('order-list-refund');
-    // 获取四个空白提示框
-    const tipAll = document.getElementById('empty-all');
-    const tipPay = document.getElementById('empty-paywait');
-    const tipPaid = document.getElementById('empty-paid');
-    const tipRefund = document.getElementById('empty-refund');
-
-    // 清空上次渲染的订单
-    wrapAll.innerHTML = '';
-    wrapPay.innerHTML = '';
-    wrapPaid.innerHTML = '';
-    wrapRefund.innerHTML = '';
-    // 默认显示空白提示
-    tipAll.style.display = 'flex';
-    tipPay.style.display = 'flex';
-    tipPaid.style.display = 'flex';
-    tipRefund.style.display = 'flex';
-
-    // 读取本地存储的全部订单
-    let allOrderData = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
-    // 筛选和输入联系方式一致的订单（免费号也会匹配）
-    const targetOrder = allOrderData.filter(item => item.phoneQQ === searchContact);
-    if (targetOrder.length === 0) return;
-
-    // 存在订单，隐藏空白文字提示
-    tipAll.style.display = 'none';
-    tipPay.style.display = 'none';
-    tipPaid.style.display = 'none';
-    tipRefund.style.display = 'none';
-
-    // 循环生成订单卡片
-    targetOrder.forEach(item => {
-        const cardDom = document.createElement('div');
-        cardDom.className = 'order-card';
-        // 订单卡片内容（包含0元免费商品展示）
-        cardDom.innerHTML = `
-            <div class="order-line">
-                <span class="order-label">商品名称：</span>
-                <span>${item.goodsName}</span>
-            </div>
-            <div class="order-line">
-                <span class="order-label">下单时间：</span>
-                <span>${item.createTime}</span>
-            </div>
-            <div class="order-line">
-                <span class="order-label">实付金额：</span>
-                <span class="order-price">¥${item.price}</span>
-            </div>
-            <div class="order-line">
-                <span class="order-label">订单状态：</span>
-                <span>${item.orderStatus}</span>
-            </div>
-        `;
-        // 全部分类都插入卡片
-        wrapAll.appendChild(cardDom.cloneNode(true));
-        // 按状态分到对应标签页
-        if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
-        if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
-        if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
-    })
-}
-
-// 重写验证码验证成功函数，验证通过自动渲染订单
-const originCheckCodeFunc = checkCode;
-function checkCode() {
     const input = document.getElementById("codeInput").value.trim().toLowerCase();
     const right = currentCode.toLowerCase();
     if(input !== right){
@@ -474,6 +409,108 @@ function checkCode() {
     const searchNum = document.getElementById('contactInput').value.trim();
     renderMatchOrder(searchNum);
     goPage(2);
+}
+// ========== 页面切换函数 ==========
+function goPage(pageNum){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(`page${pageNum}`).classList.add("active");
+}
+// ========== 订单Tab标签切换 ==========
+function switchTab(tabName){
+    document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
+    document.querySelector(`.tab-item[data-tab="${tabName}"]`).classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+}
+// ===================== 本地订单读取渲染（含订单号、查看卡密） =====================
+function renderMatchOrder(searchContact) {
+    const wrapAll = document.getElementById('order-list-all');
+    const wrapPay = document.getElementById('order-list-paywait');
+    const wrapPaid = document.getElementById('order-list-paid');
+    const wrapRefund = document.getElementById('order-list-refund');
+    const tipAll = document.getElementById('empty-all');
+    const tipPay = document.getElementById('empty-paywait');
+    const tipPaid = document.getElementById('empty-paid');
+    const tipRefund = document.getElementById('empty-refund');
+    wrapAll.innerHTML = '';
+    wrapPay.innerHTML = '';
+    wrapPaid.innerHTML = '';
+    wrapRefund.innerHTML = '';
+    tipAll.style.display = 'flex';
+    tipPay.style.display = 'flex';
+    tipPaid.style.display = 'flex';
+    tipRefund.style.display = 'flex';
+    let allOrderData = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
+    const targetOrder = allOrderData.filter(item => item.phoneQQ === searchContact);
+    if (targetOrder.length === 0) return;
+    tipAll.style.display = 'none';
+    tipPay.style.display = 'none';
+    tipPaid.style.display = 'none';
+    tipRefund.style.display = 'none';
+    targetOrder.forEach(item => {
+        const cardDom = document.createElement('div');
+        cardDom.className = 'order-card';
+        cardDom.innerHTML = `
+            <div class="order-line">
+                <span class="order-label">订单号：</span>
+                <span>${item.orderId}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">商品名称：</span>
+                <span>${item.goodsName}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">下单时间：</span>
+                <span>${item.createTime}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-price">¥${item.price}</span>
+            </div>
+            <div class="order-line">
+                <span class="order-label">订单状态：</span>
+                <span>${item.orderStatus}</span>
+            </div>
+            <div style="margin-top:10px;text-align:right;">
+                <button class="view-card-btn" data-oid="${item.orderId}">查看卡密</button>
+            </div>
+        `;
+        wrapAll.appendChild(cardDom.cloneNode(true));
+        if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
+        if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
+        if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
+    })
+}
+// 查看卡密点击事件
+document.addEventListener("click",async e=>{
+    if(e.target.classList.contains("view-card-btn")){
+        const oid = e.target.dataset.oid;
+        const orders = JSON.parse(localStorage.getItem('localShopOrder')||'[]');
+        const target = orders.find(o=>o.orderId===oid);
+        if(!target.cardKey){
+            target.cardKey = getRandomCard();
+            localStorage.setItem('localShopOrder',JSON.stringify(orders));
+        }
+        currentShowCard = target.cardKey;
+        document.getElementById('cardText').innerText = currentShowCard;
+        document.getElementById('cardMask').style.display = "flex";
+    }
+})
+// 关闭卡密弹窗
+document.getElementById('closeCard').onclick = ()=>{
+    document.getElementById('cardMask').style.display = "none";
+}
+// 点击遮罩关闭
+document.getElementById('cardMask').onclick = e=>{
+    if(e.target.id === "cardMask") document.getElementById('cardMask').style.display = "none";
+}
+// 复制卡密
+document.getElementById('copyCard').onclick = async ()=>{
+    try{
+        await navigator.clipboard.writeText(currentShowCard);
+        alert("卡密复制成功！");
+    }catch(err){
+        alert("复制失败，长按文字手动复制");
+    }
 }
 </script>
 </body>
