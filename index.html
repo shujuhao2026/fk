@@ -11,11 +11,9 @@ body{background:#ffffff;}
 .pop-mask{
     position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0.5);
     z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;
-    pointer-events:none; /* 外层遮罩禁止捕获点击 */
 }
 .pop-box{
     width:100%;max-width:420px;background:#fff;border-radius:16px;overflow:hidden;
-    pointer-events:auto; /* 弹窗内部恢复点击能力 */
 }
 .pop-top{
     background:#2962ed;color:#fff;padding:18px 16px;text-align:center;position:relative;
@@ -677,7 +675,7 @@ body{background:#ffffff;}
                 </div>
                 <div class="goods-info">
                     <div class="goods-name">暗区数据号30级3～30M刀皮1+</div>
-                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余216件</span></div>
+                    <div class="goods-row"><span class="goods-price">¥15</span><span class="goods-tag soldout">剩余217件</span></div>
                 </div>
             </div>
             <div class="goods-item">
@@ -700,7 +698,7 @@ body{background:#ffffff;}
             <span class="tag2">一件起购</span>
         </div>
         <div class="form-text">
-<br>下单填写正确联系方式，超24小时无售后 
+订单查询：https://shujuhao2026.github.io/cha<br>下单填写正确联系方式，超24小时无售后 
                                  购买失控进化矿工请支付时备注区和ID
         </div>
         <form id="myForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
@@ -743,79 +741,16 @@ body{background:#ffffff;}
     </div>
 </div>
 <script>
-// 公告关闭函数（优先定义，保证点击能找到方法）
 function closePop(){
     document.getElementById('mainPop').style.display = 'none';
+    document.getElementById('homePage').style.display = 'block';
 }
-
-// 生成唯一订单号
-function createOrderId(){
-    const t = Date.now();
-    const r = Math.floor(Math.random()*1000);
-    return "OD"+t+r;
-}
-
-// 生成设备唯一标识，区分设备限制免费领取
-function createDeviceUUID(){
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{
-        const r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
-        return v.toString(16);
-    })
-}
-// 读取/生成本设备ID
-let deviceId = localStorage.getItem("shopDeviceId");
-if(!deviceId){
-    deviceId = createDeviceUUID();
-    localStorage.setItem("shopDeviceId", deviceId);
-}
-// 获取当日0点时间戳，用于每日刷新免费资格
-function getTodayZero(){
-    let now = new Date();
-    let zero = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-    return zero.getTime();
-}
-// 判断当前设备今日是否已领取免费号
-function checkDeviceFreeLimit(){
-    let record = JSON.parse(localStorage.getItem("freeDeviceRecord") || "{}");
-    let zeroTs = getTodayZero();
-    if(!record[deviceId] || record[deviceId] < zeroTs){
-        return true;
-    }
-    return false;
-}
-// 标记当前设备今日已领取免费商品
-function saveDeviceFreeRecord(){
-    let record = JSON.parse(localStorage.getItem("freeDeviceRecord") || "{}");
-    record[deviceId] = Date.now();
-    localStorage.setItem("freeDeviceRecord", JSON.stringify(record));
-}
-
-// 保存订单到本地存储完整函数
-function saveLocalOrder(goodsName, contactInfo, priceNum) {
-    let orderArr = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
-    const orderData = {
-        orderId: createOrderId(),
-        phoneQQ: contactInfo,
-        goodsName: goodsName,
-        price: priceNum,
-        createTime: new Date().toLocaleString(),
-        orderStatus: "待付款",
-        cardKey: ""
-    };
-    orderArr.push(orderData);
-    localStorage.setItem('localShopOrder', JSON.stringify(orderArr));
-}
-
-// 商品分类切换
 function switchTab(tabId){
     document.querySelectorAll('.tab-item').forEach(el=>el.classList.remove('active'));
     document.querySelectorAll('.goods-panel').forEach(el=>el.classList.remove('active'));
     document.querySelector(`.tab-item[data-id="${tabId}"]`).classList.add('active');
     document.getElementById(tabId).classList.add('active');
 }
-
-// 全局变量存储选中商品价格
-window.tempSelectPrice = 0;
 const allGoods = document.querySelectorAll('.goods-item');
 const formMask = document.getElementById('formMask');
 const warnMask = document.getElementById('warnMask');
@@ -832,58 +767,33 @@ const numInput = document.getElementById('numInput');
 const knownBtn = document.getElementById('knownBtn');
 const closePopBtn = document.getElementById('closePopBtn');
 const msgClose = document.getElementById('msgClose');
-
-// 点击商品弹出下单框
 allGoods.forEach(item=>{
     item.onclick = ()=>{
         let name = item.querySelector('.goods-name').innerText;
-        let priceText = item.querySelector('.goods-price').innerText;
-        window.tempSelectPrice = parseFloat(priceText.replace('¥',''));
         goodsTitle.innerText = name;
         titleInput.value = name;
         formMask.style.display = 'flex';
     }
 })
-
-// 数量减
 numMinus.onclick = ()=>{
     let n = Number(numInput.value);
     if(n>1) numInput.value = n-1;
 }
-// 数量加
 numPlus.onclick = ()=>{
     let n = Number(numInput.value);
     numInput.value = n+1;
 }
-
-// 下单按钮逻辑（包含免费设备限购判断）
 document.getElementById('submitBtn').onclick = function(e){
     e.preventDefault();
     let val = msgInput.value.trim();
-    const currentGoodsName = goodsTitle.innerText;
-    // 免费商品拦截判断
-    if(currentGoodsName === "雪碧免费数据号（不包售后）"){
-        if(!checkDeviceFreeLimit()){
-            alert("今日已领取免费福利号，明天再来！");
-            return;
-        }
-    }
-    // 手机号/QQ格式校验
     if(!val){alert("请填写联系方式");return;}
     if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
         alert("号码格式错误");
         return;
     }
-    const buyPrice = window.tempSelectPrice ?? 0;
-    saveLocalOrder(currentGoodsName, val, buyPrice);
-    // 免费商品标记领取记录
-    if(currentGoodsName === "雪碧免费数据号（不包售后）"){
-        saveDeviceFreeRecord();
-    }
     warnMask.style.display = 'flex';
 }
-
-// 弹窗关闭事件
+// 无视提交结果，直接走完流程
 knownBtn.onclick = async ()=>{
     warnMask.style.display = 'none';
     loading.style.display = 'block';
@@ -900,8 +810,8 @@ msgClose.onclick = ()=> msgMask.style.display = 'none';
 formMask.onclick = e=>{if(e.target === formMask) formMask.style.display = 'none';}
 warnMask.onclick = e=>{if(e.target === warnMask) warnMask.style.display = 'none';}
 popMask.onclick = e=>{if(e.target === popMask) popMask.style.display = 'none';}
-
-// 成交数字自动增长
+msgMask.onclick = e=>{if(e.target === msgMask) msgMask.style.display = 'none';}
+// 成交数字自增
 let dealNum = document.getElementById('dealNum');
 let saveCount = localStorage.getItem('dealCount');
 if(saveCount) dealNum.innerText = saveCount;
@@ -911,6 +821,61 @@ setInterval(()=>{
     localStorage.setItem('dealCount', num);
     dealNum.innerText = num;
 },10000);
+// ===================== 新增：本地订单存储模块（全手机浏览器兼容） =====================
+// 1. 获取当前点击商品的价格
+function getSelectGoodsPrice(domItem) {
+    let priceText = domItem.querySelector('.goods-price').innerText;
+    // 去除¥符号转数字，兼容0元免费商品
+    return parseFloat(priceText.replace('¥', ''));
+}
+
+// 2. 保存订单到浏览器本地存储 localStorage
+function saveLocalOrder(goodsName, contactInfo, priceNum) {
+    // 读取已有订单，无数据则初始空数组
+    let orderArr = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
+    // 组装订单信息
+    const orderData = {
+        phoneQQ: contactInfo,    // 用户填写的QQ/手机号
+        goodsName: goodsName,    // 购买商品名称（含免费雪碧福利号）
+        price: priceNum,         // 商品价格，0元免费单正常存储
+        createTime: new Date().toLocaleString(), // 下单时间
+        orderStatus: "待付款"    // 默认状态
+    };
+    // 新增订单进数组
+    orderArr.push(orderData);
+    // 重新存入本地存储
+    localStorage.setItem('localShopOrder', JSON.stringify(orderArr));
+}
+
+// 3. 拦截商品点击事件，缓存当前选中商品价格
+let oldGoodsClickFun = allGoods[0].onclick;
+allGoods.forEach(goodsDom => {
+    const originClick = goodsDom.onclick;
+    goodsDom.onclick = function () {
+        originClick();
+        // 全局临时存储当前选中商品价格，下单时读取
+        window.tempSelectPrice = getSelectGoodsPrice(this);
+    }
+})
+
+// 4. 重写下单提交按钮逻辑，表单校验通过后自动保存订单
+const oldSubmitBtnClick = document.getElementById('submitBtn').onclick;
+document.getElementById('submitBtn').onclick = function(e){
+    e.preventDefault();
+    let val = msgInput.value.trim();
+    // 原有校验逻辑完全保留，不修改
+    if(!val){alert("请填写联系方式");return;}
+    if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
+        alert("号码格式错误");
+        return;
+    }
+    // ========== 新增：校验通过，写入本地订单 ==========
+    const currentGoodsName = goodsTitle.innerText;
+    const buyPrice = window.tempSelectPrice ?? 0;
+    saveLocalOrder(currentGoodsName, val, buyPrice);
+    // 原有弹窗逻辑不变
+    warnMask.style.display = 'flex';
+}
 </script>
 </body>
 </html>
