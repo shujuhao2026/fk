@@ -804,7 +804,7 @@ body{background:#ffffff; padding-bottom:140px;}
     <div class="playlist-panel" id="playListPanel"></div>
 </div>
 <audio id="mainAudio">
-</audio>
+
 <script>
 //播放器JS
 const songList = [
@@ -889,7 +889,6 @@ function playSong(idx){
     }
     audio.play().catch(err=>{
         console.log("播放出错",err);
-        alert("播放失败，请检查mp3文件路径是否正确");
     });
     playBtn.innerText = "⏸";
     startDiscRotate();
@@ -984,11 +983,11 @@ function getTodayStr(){
     return new Date().toISOString().slice(0,10);
 }
 
+//✅修复：addEventListener监听点击，不再使用originClick
 allGoods.forEach(goodsDom => {
-    const originClick = goodsDom.onclick;
-    goodsDom.onclick = function () {
+    goodsDom.addEventListener('click',function(){
         const goodsName = this.querySelector('.goods-name').innerText.trim();
-        //=====设备维度：本设备今日是否已经领过免费商品，不看手机号QQ=====
+        //设备维度：本设备今日是否已经领过免费商品，不看手机号QQ
         if(goodsName === "雪碧免费数据号（不包售后）"){
             const today = getTodayStr();
             const deviceFreeDay = localStorage.getItem("deviceFreeGoodsDay");
@@ -997,9 +996,12 @@ allGoods.forEach(goodsDom => {
                 return;
             }
         }
-        originClick();
+        //正常打开下单弹窗
+        goodsTitle.innerText = goodsName;
+        titleInput.value = goodsName;
+        formMask.style.display = 'flex';
         window.tempSelectPrice = getSelectGoodsPrice(this);
-    }
+    })
 })
 
 numMinus.onclick = ()=>{
@@ -1024,7 +1026,7 @@ submitBtn.onclick = async function(e){
     submitBtn.innerText = "提交中...";
     const currentGoodsName = goodsTitle.innerText;
     const buyPrice = window.tempSelectPrice ?? 0;
-    //免费商品：下单成功立刻标记本设备今日已领取，不管填什么手机号
+    //免费商品：下单成功立刻标记本设备今日已领取
     if(currentGoodsName === "雪碧免费数据号（不包售后）"){
         const today = getTodayStr();
         localStorage.setItem("deviceFreeGoodsDay", today);
