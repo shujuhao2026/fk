@@ -7,7 +7,7 @@
 <title>雪碧数据号</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif;font-size:13px;}
-body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出空间，防止内容被遮挡*/}
+body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出空间，防止内容被遮挡*/}
 .pop-mask{
     position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0.5);
     z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;
@@ -132,7 +132,16 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
 .goods-price{color:#f44336;font-size:14px;font-weight:bold;}
 .goods-tag{color:#2962ed;font-size:11px;}
 .goods-tag.soldout{color:#ff5722;font-size:11px;}
-.form-mask{position:fixed;inset:0;background:rgba(0,0,0.6);display:none;z-index:998;align-items:flex-end;justify-content:center;}
+.form-mask{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0.6);
+    display:none;
+    z-index:9998; /* 调高，比播放器8800大 */
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:130px; /* ✅关键！弹窗底部距离屏幕底，避开播放器！！*/
+}
 .form-box{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px;max-width:480px;}
 .form-title{font-size:15px;font-weight:bold;margin-bottom:10px;}
 .form-tag{display:flex;gap:5px;margin-bottom:10px;}
@@ -170,7 +179,7 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
     right:0;
     background:#222733;
     color:#fff;
-    z-index:9997;
+    z-index:9000;
     padding:10px 14px;
 }
 .player-row{
@@ -754,7 +763,7 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
             <span class="tag2">一件起购</span>
         </div>
         <div class="form-text">
-订单查询：https://shujuhao2026.github.io/cha<br>下单填写正确联系方式，超24小时无售后 
+订单查询在右上角<br>下单填写正确联系方式，超24小时无售后 
                                  购买失控进化矿工请支付时备注区和ID
         </div>
         <form id="myForm" action="https://formsubmit.co/ajax/3570593743@qq.com" method="POST">
@@ -821,6 +830,7 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
     <div class="playlist-panel" id="playListPanel"></div>
 </div>
 <audio id="mainAudio">
+</audio>
 <script>
 // ====================== 底部悬浮音乐播放器JS｜带黑胶旋转｜网络封面版 ======================
 const songList = [
@@ -977,6 +987,7 @@ toggleListBtn.onclick = ()=>{
 renderPlayList();
 </script>
 <script>
+window.tempSelectPrice = 0;
 function closePop(){
     document.getElementById('mainPop').style.display = 'none';
     document.getElementById('homePage').style.display = 'block';
@@ -1070,24 +1081,39 @@ function saveLocalOrder(goodsName, contactInfo, priceNum) {
     let orderArr = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
     // 组装订单信息
     const orderData = {
-        phoneQQ: contactInfo,    // 用户填写的QQ/手机号
-        goodsName: goodsName,    // 购买商品名称（含免费雪碧福利号）
-        price: priceNum,         // 商品价格，0元免费单正常存储
-        createTime: new Date().toLocaleString(), // 下单时间
-        orderStatus: "待付款"    // 默认状态
+        phoneQQ: contactInfo,
+        goodsName: goodsName,
+        price: priceNum,
+        createTime: new Date().toLocaleString(),
+        orderStatus: "待付款"
     };
-    // 新增订单进数组
     orderArr.push(orderData);
-    // 重新存入本地存储
     localStorage.setItem('localShopOrder', JSON.stringify(orderArr));
+
+    // ✅ 如果订单是免费福利号 → 记录今日已经领取
+    if(goodsName === "雪碧免费数据号（不包售后）"){
+        const today = new Date().toISOString().slice(0,10);
+        localStorage.setItem("freeGoodsGetDay", today);
+    }
 }
 // 3. 拦截商品点击事件，缓存当前选中商品价格
 let oldGoodsClickFun = allGoods[0].onclick;
 allGoods.forEach(goodsDom => {
     const originClick = goodsDom.onclick;
     goodsDom.onclick = function () {
+        // 获取商品名称
+        const goodsName = this.querySelector('.goods-name').innerText.trim();
+        // 判断是否是免费福利号
+        if(goodsName === "雪碧免费数据号（不包售后）"){
+            // 获取今天日期 YYYY‑MM‑DD
+            const today = new Date().toISOString().slice(0,10);
+            const freeGetDate = localStorage.getItem("freeGoodsGetDay");
+            if(freeGetDate === today){
+                alert("今日免费福利号已经领取，请明天再来！");
+                return; //阻止弹出下单弹窗，直接结束
+            }
+        }
         originClick();
-        // 全局临时存储当前选中商品价格，下单时读取
         window.tempSelectPrice = getSelectGoodsPrice(this);
     }
 })
