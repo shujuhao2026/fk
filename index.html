@@ -809,7 +809,7 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
         </div>
         <div class="player-ctrl">
             <button class="ctrl-sm" id="prevBtn">⏮</button>
-            <button class="ctrl-sm" id="playBtn">▶</button>
+            <button class="ctrl-sm" id="playBtn">▶️</button>
             <button class="ctrl-sm" id="nextBtn">⏭</button>
             <span class="toggle-playlist" id="toggleList">歌单</span>
         </div>
@@ -821,6 +821,7 @@ body{background:#ffffff; padding-bottom:80px; /*给底部悬浮播放器留出�
     <div class="playlist-panel" id="playListPanel"></div>
 </div>
 <audio id="mainAudio">
+<script>
 // ====================== 底部悬浮音乐播放器JS｜带黑胶旋转｜网络封面版 ======================
 const songList = [
     {
@@ -828,32 +829,153 @@ const songList = [
         singer:"刘舒妤",
         src:"./music/失眠.mp3",
         cover:"https://i.ibb.co/TqDVBgjp/IMG-2920.jpg"
+    },
+    {
+        title:"告白气球",
+        singer:"周杰伦",
+        src:"./music/告白气球.mp3",
+        cover:"https://i.ibb.co/B2sR1bqj/IMG-2922.jpg"
+    },
+    {
+        title:"恋人",
+        singer:"李荣浩",
+        src:"./music/恋人.mp3",
+        cover:"https://i.ibb.co/prd2yxW7/IMG-2925.jpg"
+    },
+    {
+        title:"青花",
+        singer:"周传雄",
+        src:"./music/青花.mp3",
+        cover:"https://i.ibb.co/kVGfYfkw/IMG-2923.jpg"
+    },
+    {
+        title:"无人之岛",
+        singer:"任然",
+        src:"./music/无人之岛.mp3",
+        cover:"https://i.ibb.co/rGyg1Nkj/IMG-2924.jpg"
     }
-{
-    title:"告白气球",
-    singer:"周杰伦",
-    src:"./music/告白气球.mp3",
-    cover:"https://i.ibb.co/B2sR1bqj/IMG-2922.jpg"
-}
-{
-    title:"恋人",
-    singer:"李荣浩",
-    src:"./music/恋人.mp3",
-    cover:"https://i.ibb.co/prd2yxW7/IMG-2925.jpg"
-}
-{
-    title:"青花",
-    singer:"周传雄",
-    src:"./music/青花.mp3",
-    cover:"https://i.ibb.co/kVGfYfkw/IMG-2923.jpg"
-}
-{
-    title:"无人之岛",
-    singer:"任然",
-    src:"./music/无人之岛.mp3",
-    cover:"https://i.ibb.co/rGyg1Nkj/IMG-2924.jpg"
-}
 ];
+
+let currentIdx = 0;
+const audio = document.getElementById("mainAudio");
+const playBtn = document.getElementById("playBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const plSong = document.getElementById("plSong");
+const plSinger = document.getElementById("plSinger");
+const coverImg = document.getElementById("coverImg");
+const coverWrap = document.getElementById("coverWrap");
+const progressInner = document.getElementById("progressInner");
+const progressWrap = document.getElementById("progressWrap");
+const curTimeDom = document.getElementById("curTime");
+const durTimeDom = document.getElementById("durTime");
+const toggleListBtn = document.getElementById("toggleList");
+const playListPanel = document.getElementById("playListPanel");
+
+//开启封面旋转
+function startDiscRotate(){
+    coverWrap.classList.add("playing-disc");
+}
+//停止封面旋转
+function stopDiscRotate(){
+    coverWrap.classList.remove("playing-disc");
+}
+
+//渲染歌单列表
+function renderPlayList(){
+    playListPanel.innerHTML = "";
+    songList.forEach((s,idx)=>{
+        const div = document.createElement("div");
+        div.className = "play-item"+(idx===currentIdx?" active":"");
+        div.innerText = s.title + " - " + s.singer;
+        div.onclick = ()=>{playSong(idx);};
+        playListPanel.appendChild(div);
+    })
+}
+//格式化时间
+function fmtTime(s){
+    if(isNaN(s)) return "00:00";
+    let m = Math.floor(s/60);
+    let sec = Math.floor(s%60);
+    return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+}
+//播放指定序号
+function playSong(idx){
+    currentIdx = idx;
+    const s = songList[currentIdx];
+    audio.src = s.src;
+    plSong.innerText = s.title;
+    plSinger.innerText = s.singer;
+    if(s.cover){
+        coverImg.src = s.cover;
+    }else{
+        coverImg.src = "https://i.ibb.co/MDvSm79m/IMG-2683.jpg";
+    }
+    audio.play().catch(err=>{
+        console.log("播放出错",err);
+        alert("播放失败，请检查mp3文件路径是否正确");
+    });
+    playBtn.innerText = "⏸";
+    startDiscRotate();
+    renderPlayList();
+}
+//播放暂停
+playBtn.onclick = ()=>{
+    if(audio.paused){
+        audio.play().catch(e=>console.log(e));
+        playBtn.innerText = "⏸";
+        startDiscRotate();
+    }else{
+        audio.pause();
+        playBtn.innerText = "▶";
+        stopDiscRotate();
+    }
+}
+prevBtn.onclick = ()=>{
+    let i = currentIdx-1;
+    if(i<0) i = songList.length-1;
+    playSong(i);
+}
+nextBtn.onclick = ()=>{
+    let i = currentIdx+1;
+    if(i>=songList.length) i=0;
+    playSong(i);
+}
+//点击进度条跳转
+progressWrap.onclick = (e)=>{
+    const rect = progressWrap.getBoundingClientRect();
+    const p = (e.clientX - rect.left)/rect.width;
+    if(audio.duration) audio.currentTime = audio.duration * p;
+}
+//时间更新
+audio.ontimeupdate = ()=>{
+    const per = ((audio.currentTime/audio.duration)*100||0)+"%";
+    progressInner.style.width = per;
+    curTimeDom.innerText = fmtTime(audio.currentTime);
+}
+audio.onloadedmetadata = ()=>{
+    durTimeDom.innerText = fmtTime(audio.duration);
+}
+//播放结束自动下一首
+audio.onended = ()=>{
+    let i = currentIdx+1;
+    if(i>=songList.length) i=0;
+    playSong(i);
+}
+//音频原生事件，同步旋转状态
+audio.onpause = function(){
+    stopDiscRotate();
+}
+audio.onplay = function(){
+    startDiscRotate();
+}
+//展开收起歌单
+toggleListBtn.onclick = ()=>{
+    playListPanel.classList.toggle("show");
+}
+//初始化渲染歌单
+renderPlayList();
+</script>
 <script>
 function closePop(){
     document.getElementById('mainPop').style.display = 'none';
