@@ -18,7 +18,7 @@ body{background:#fff;padding:20px 16px;}
 .form-box{display:flex;gap:8px;margin-bottom:24px}
 .input-text{flex:1;padding:14px 16px;border:1px solid #eee;border-radius:99px;font-size:16px;outline:none}
 .btn-submit{background:#3478f6;color:white;border:none;padding:14px 22px;border-radius:99px;font-size:16px;cursor:pointer;}
-.warn-text{color:#999;font-size:14;line-height:1.6;margin-bottom:24px}
+.warn-text{color:#999;font-size:14px;line-height:1.6;margin-bottom:24px}
 .tip-box{background:#fff8e6;border-radius:12px;padding:18px;margin-bottom:40px}
 .tip-title{display:flex;align-items:center;gap:6px;color:#f5a623;font-size:16px;font-weight:600;margin-bottom:12px}
 .tip-list{font-size:14px;color:#333;line-height:1.8}
@@ -77,7 +77,7 @@ body{background:#fff;padding:20px 16px;}
     font-weight: bold;
 }
 .view-card-btn{
-    background:#2962ed;color:#fff;border:0;padding:5px 12px;border-radius:6;font-size:12px;cursor:pointer;
+    background:#2962ed;color:#fff;border:0;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;
 }
 /* ====== 新增订单卡密详情页样式（你提供的UI）====== */
 .page-card{background:#f5f5f7 !important;padding:0 0 40px 0;}
@@ -185,6 +185,7 @@ body{background:#fff;padding:20px 16px;}
     color:#222;
     line-height:1.7;
     word-break:break-all;
+    white-space:pre-wrap;
 }
 </style>
 </head>
@@ -269,7 +270,7 @@ body{background:#fff;padding:20px 16px;}
         <div id="order-list-refund"></div>
     </div>
 </div>
-<!-- 页面3：独立订单卡密详情（你的目标UI，弹窗彻底删除） -->
+<!-- 页面3：独立订单卡密详情 -->
 <div class="page page-card" id="page3">
     <div class="card-header">
         <div class="card-back" onclick="goPage(2)">&lt;</div>
@@ -346,9 +347,17 @@ async function loadCardTxt(){
     try{
         const res = await fetch("./雪碧数据.txt");
         const text = await res.text();
-        allCardList = text.split(/\r?\n/).filter(line=>line.trim()!="");
+        allCardList = text.split(/\r?\n/)
+            .map(line=>line.trimEnd())
+            .filter(line=>{
+                if(!line.trim()) return false;
+                if(line.startsWith("=== 卡密内容 ===")) return false;
+                return true;
+            });
+        console.log("加载卡密总数：",allCardList.length);
     }catch(err){
         console.error("读取卡密文件失败",err);
+        allCardList = ["读取雪碧数据.txt失败，请检查文件放在同目录、编码UTF‑8"];
     }
 }
 loadCardTxt();
@@ -358,7 +367,7 @@ function getRandomCard(){
     const idx = Math.floor(Math.random()*allCardList.length);
     return allCardList[idx];
 }
-// ========== 验证码核心逻辑（修复画布报错） ==========
+// ========== 验证码核心逻辑 ==========
 const codeList = ["YBPW", "BPWF", "nW1k", "BJ5U", "CYDV"];
 let currentCode = "";
 const canvas = document.getElementById("captchaCanvas");
@@ -502,7 +511,6 @@ function renderMatchOrder(searchContact) {
     tipPaid.style.display = 'none';
     tipRefund.style.display = 'none';
     targetOrder.forEach(item => {
-        // 核心需求：免费商品展示文字改为已付款
         let showStatus = item.orderStatus;
         if(item.goodsName === "雪碧免费数据号（不包售后）"){
             showStatus = "已付款";
@@ -530,28 +538,25 @@ function renderMatchOrder(searchContact) {
             </div>
         `;
         wrapAll.appendChild(cardDom.cloneNode(true));
-        // 按原始状态分类
         if (item.orderStatus === "待付款") wrapPay.appendChild(cardDom);
         if (item.orderStatus === "已支付") wrapPaid.appendChild(cardDom);
         if (item.orderStatus === "已退款") wrapRefund.appendChild(cardDom);
-        // 免费单强制放入已支付列表
         if(item.goodsName === "雪碧免费数据号（不包售后）"){
             wrapPaid.appendChild(cardDom.cloneNode(true));
         }
     })
 }
-// 点击查看卡 → 切换page3，填充订单全部信息
+// 点击查看卡 → 切换page3，填充订单全部信息【修复免费订单空白】
 document.addEventListener("click",async e=>{
     if(e.target.classList.contains("view-card-btn")){
         const oid = e.target.dataset.oid;
         const orders = JSON.parse(localStorage.getItem('localShopOrder')||'[]');
         const target = orders.find(o=>o.orderId===oid);
         if(!target.cardKey){
-            target.card = getRandomCard();
+            target.cardKey = getRandomCard();
             localStorage.setItem('localShopOrder',JSON.stringify(orders));
         }
         currentOrderData = target;
-        // 填充详情页面数据
         document.getElementById('showOrderId').innerText = target.orderId;
         document.getElementById('showCreateTime').innerText = target.createTime;
         document.getElementById('showGoodsName').innerText = target.goodsName;
@@ -562,20 +567,23 @@ document.addEventListener("click",async e=>{
 })
 // 单条复制卡密
 document.querySelector('.copy-single').onclick = async ()=>{
-    const text = document.getElementById('showCardText').innerText.trim();
-    await navigator.clipboard.writeText(text);
+    const rawText = document.getElementById('showCardText').innerText;
+    const copyText = `=== 卡密内容 ===\n${rawText}`;
+    await navigator.clipboard.writeText(copyText);
     alert("复制成功");
 }
 // 一键复制全部
 document.getElementById('copyAll').onclick = async ()=>{
-    const text = document.getElementById('showCardText').innerText.trim();
-    await navigator.clipboard.writeText(text);
-    alert("全部复制成功");
+    const rawText = document.getElementById('showCardText').innerText;
+    const copyText = `=== 卡密内容 ===\n${rawText}`;
+    await navigator.clipboard.writeText(copyText);
+    alert("复制成功");
 }
 // 导出=全部复制
 document.getElementById('exportBtn').onclick = async ()=>{
-    const text = document.getElementById('showCardText').innerText.trim();
-    await navigator.clipboard.writeText(text);
+    const rawText = document.getElementById('showCardText').innerText;
+    const copyText = `=== 卡密内容 ===\n${rawText}`;
+    await navigator.clipboard.writeText(copyText);
     alert("卡密已复制，可粘贴保存");
 }
 </script>
