@@ -7,7 +7,7 @@
 <title>雪碧数据号</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif;font-size:13px;}
-body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出空间，防止内容被遮挡*/}
+body{background:#ffffff; padding-bottom:140px;}
 .pop-mask{
     position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0.5);
     z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;
@@ -54,7 +54,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 }
 .shop-data-text{font-size:12px;margin:4px 0 8px;opacity:0.95;}
 .shop-tips{margin:8px 0;line-height:1.6;font-size:13px;}
-/* 黑色垂直滚动横幅 */
 .banner {
   background:#111111;
   border-radius:999px;
@@ -73,17 +72,16 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
   color:#ffdd44;
   font-weight:500;
 }
-/* 22条号码，每条1.2s 22*1.2=26.4s一轮 */
 @keyframes rollUp{
   0%{transform:translateY(0);}
   100%{transform:translateY(-616px);}
 }
 .tab-wrap{padding:12px;}
 .tab-head{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-bottom:12px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:12px;
 }
 .tab-item{
     background:#f3f5f9;padding:12px;border-radius:10px;border:2px solid transparent;cursor:pointer;
@@ -93,7 +91,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 .tab-sub{font-size:11px;color:#666;}
 .goods-panel{display:none;}
 .goods-panel.active{display:block;}
-/* 有图商品：左图右文布局 */
 .goods-item{
     display:flex;
     align-items:stretch;
@@ -102,11 +99,9 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
     border-bottom:1px solid #eee;
     cursor:pointer;
 }
-/* 无图商品：保持原始单行样式，不使用flex */
 .goods-item.noimg-goods{
     display:block;
 }
-/* 左侧图片容器，固定宽度，高度填满item */
 .goods-img-box{
     width:80px;
     flex-shrink:0;
@@ -120,7 +115,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
     object-fit:cover;
     display:block;
 }
-/* 右侧文字区域占剩余宽度 */
 .goods-info{
     flex:1;
     display:flex;
@@ -137,10 +131,10 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
     inset:0;
     background:rgba(0,0,0.6);
     display:none;
-    z-index:9998; /* 调高，比播放器8800大 */
+    z-index:9998;
     align-items:flex-end;
     justify-content:center;
-    padding-bottom:130px; /* ✅关键！弹窗底部距离屏幕底，避开播放器！！*/
+    padding-bottom:130px;
 }
 .form-box{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px;max-width:480px;}
 .form-title{font-size:15px;font-weight:bold;margin-bottom:10px;}
@@ -170,8 +164,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 .msg-title{font-size:15px;font-weight:bold;color:#2578dd;margin-bottom:6px;}
 .msg-text{font-size:11px;color:#666;line-height:1.6;margin-bottom:12px;}
 .msg-close{background:#2578dd;color:#fff;border:none;padding:5px 22px;border-radius:4px;font-size:12px;}
-
-/* ============ 底部悬浮音乐播放器样式 ============ */
 .music-float-player{
     position:fixed;
     bottom:0;
@@ -179,7 +171,7 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
     right:0;
     background:#222733;
     color:#fff;
-    z-index:9000;
+    z-index:8800;
     padding:10px 14px;
 }
 .player-row{
@@ -190,7 +182,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 .player-cover{
     width:42px;height:42px;border-radius:50%;background:#444;flex-shrink:0;overflow:hidden;
 }
-/* ==========黑胶唱片旋转动画新增代码========== */
 .player-cover img{
     transition: transform 0.2s ease;
 }
@@ -262,7 +253,7 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
             <button class="contact-btn">联系TA</button>
         </div>
         <div class="shop-avatar">
-            <img src="https://i.ibb.co/pBmrY2vG/IMG-2767.jpg" ">
+            <img src="https://i.ibb.co/pBmrY2vG/IMG-2767.jpg">
         </div>
         <div class="shop-name">雪碧『高质量💯』</div>
         <div class="shop-sub">45 商品</div>
@@ -278,7 +269,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 ❗️官方频道@xiaoxinshujuhau<br>
 ❗️下滑查看全部商品
         </div>
-        <!-- 22条不重复脱敏手机号 -->
         <div class="banner">
             <div class="banner-wrap">
                 <div class="banner-item">132 **** **80 支付成功</div>
@@ -309,7 +299,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
     <div class="tab-wrap">
         <h2 style="font-size:15px;margin-bottom:10px;">卡密</h2>
         <div class="tab-head">
-            <!-- 新增第1位：免费数据号 -->
             <div class="tab-item" data-id="tab0" onclick="switchTab('tab0')">
                 <div class="tab-title">雪碧福利号</div>
                 <div class="tab-sub">1款</div>
@@ -346,7 +335,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 <div class="tab-title">苹果ID</div>
                 <div class="tab-sub">5款</div>
             </div>
-            <!-- 新增3个分类 -->
             <div class="tab-item" data-id="tab9" onclick="switchTab('tab9')">
                 <div class="tab-title">失控进化矿工🎮</div>
                 <div class="tab-sub">4款</div>
@@ -360,14 +348,12 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 <div class="tab-sub">4款</div>
             </div>
         </div>
-        <!-- 新增免费数据号面板 -->
         <div class="goods-panel" id="tab0">
             <div class="goods-item noimg-goods">
                 <div class="goods-name">雪碧免费数据号（不包售后）</div>
                 <div class="goods-row"><span class="goods-price">¥0.0</span><span class="goods-tag ">库存充足</span></div>
             </div>
         </div>
-        <!-- Telegram 无图商品，加 noimg-goods -->
         <div class="goods-panel active" id="tab1">
             <div class="goods-item noimg-goods">
                 <div class="goods-name">盲盒号-包登录「推荐」</div>
@@ -394,7 +380,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">缺货</span></div>
             </div>
         </div>
-        <!-- 和平数据号 全部改为左图，图片链接https://i.ibb.co/BK7xV1B9/IMG-2685.jpg -->
         <div class="goods-panel" id="tab2">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -442,7 +427,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- Vx扫码 原有带图，左图右文 -->
         <div class="goods-panel" id="tab3">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -481,7 +465,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- QQ直登 原有带图 -->
         <div class="goods-panel" id="tab4">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -529,7 +512,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- PUBG 带图 -->
         <div class="goods-panel" id="tab5">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -559,7 +541,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- 火影数据号 图片MDvSm79m -->
         <div class="goods-panel" id="tab6">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -586,7 +567,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- 王者数据号 图片QFZJdcy5 -->
         <div class="goods-panel" id="tab7">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -613,7 +593,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- 苹果ID 无图 -->
         <div class="goods-panel" id="tab8">
             <div class="goods-item noimg-goods">
                 <div class="goods-name">ID盲盒-天卡-包登录「推荐」</div>
@@ -636,7 +615,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 <div class="goods-row"><span class="goods-price">¥9.9</span><span class="goods-tag soldout">剩余123件</span></div>
             </div>
         </div>
-        <!-- 失控进化矿工 tab9 -->
         <div class="goods-panel" id="tab9">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -675,7 +653,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- 三角洲雷达 tab10 -->
         <div class="goods-panel" id="tab10">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -714,7 +691,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
                 </div>
             </div>
         </div>
-        <!-- 暗区数据号 tab11 -->
         <div class="goods-panel" id="tab11">
             <div class="goods-item">
                 <div class="goods-img-box">
@@ -805,8 +781,6 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
         <button class="msg-close" id="msgClose">知道了</button>
     </div>
 </div>
-
-<!-- ========== 底部悬浮播放器DOM ========== -->
 <div class="music-float-player">
     <div class="player-row">
         <div class="player-cover" id="coverWrap">
@@ -832,7 +806,7 @@ body{background:#ffffff; padding-bottom:140px; /*给底部悬浮播放器留出�
 <audio id="mainAudio">
 </audio>
 <script>
-// ====================== 底部悬浮音乐播放器JS｜带黑胶旋转｜网络封面版 ======================
+//播放器JS
 const songList = [
     {
         title:"失眠",
@@ -865,7 +839,6 @@ const songList = [
         cover:"https://i.ibb.co/rGyg1Nkj/IMG-2924.jpg"
     }
 ];
-
 let currentIdx = 0;
 const audio = document.getElementById("mainAudio");
 const playBtn = document.getElementById("playBtn");
@@ -881,17 +854,12 @@ const curTimeDom = document.getElementById("curTime");
 const durTimeDom = document.getElementById("durTime");
 const toggleListBtn = document.getElementById("toggleList");
 const playListPanel = document.getElementById("playListPanel");
-
-//开启封面旋转
 function startDiscRotate(){
     coverWrap.classList.add("playing-disc");
 }
-//停止封面旋转
 function stopDiscRotate(){
     coverWrap.classList.remove("playing-disc");
 }
-
-//渲染歌单列表
 function renderPlayList(){
     playListPanel.innerHTML = "";
     songList.forEach((s,idx)=>{
@@ -902,14 +870,12 @@ function renderPlayList(){
         playListPanel.appendChild(div);
     })
 }
-//格式化时间
 function fmtTime(s){
     if(isNaN(s)) return "00:00";
     let m = Math.floor(s/60);
     let sec = Math.floor(s%60);
     return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
 }
-//播放指定序号
 function playSong(idx){
     currentIdx = idx;
     const s = songList[currentIdx];
@@ -929,7 +895,6 @@ function playSong(idx){
     startDiscRotate();
     renderPlayList();
 }
-//播放暂停
 playBtn.onclick = ()=>{
     if(audio.paused){
         audio.play().catch(e=>console.log(e));
@@ -951,13 +916,11 @@ nextBtn.onclick = ()=>{
     if(i>=songList.length) i=0;
     playSong(i);
 }
-//点击进度条跳转
 progressWrap.onclick = (e)=>{
     const rect = progressWrap.getBoundingClientRect();
     const p = (e.clientX - rect.left)/rect.width;
     if(audio.duration) audio.currentTime = audio.duration * p;
 }
-//时间更新
 audio.ontimeupdate = ()=>{
     const per = ((audio.currentTime/audio.duration)*100||0)+"%";
     progressInner.style.width = per;
@@ -966,24 +929,20 @@ audio.ontimeupdate = ()=>{
 audio.onloadedmetadata = ()=>{
     durTimeDom.innerText = fmtTime(audio.duration);
 }
-//播放结束自动下一首
 audio.onended = ()=>{
     let i = currentIdx+1;
     if(i>=songList.length) i=0;
     playSong(i);
 }
-//音频原生事件，同步旋转状态
 audio.onpause = function(){
     stopDiscRotate();
 }
 audio.onplay = function(){
     startDiscRotate();
 }
-//展开收起歌单
 toggleListBtn.onclick = ()=>{
     playListPanel.classList.toggle("show");
 }
-//初始化渲染歌单
 renderPlayList();
 </script>
 <script>
@@ -1014,14 +973,35 @@ const numInput = document.getElementById('numInput');
 const knownBtn = document.getElementById('knownBtn');
 const closePopBtn = document.getElementById('closePopBtn');
 const msgClose = document.getElementById('msgClose');
-allGoods.forEach(item=>{
-    item.onclick = ()=>{
-        let name = item.querySelector('.goods-name').innerText;
-        goodsTitle.innerText = name;
-        titleInput.value = name;
-        formMask.style.display = 'flex';
+const submitBtn = document.getElementById("submitBtn");
+
+//生成订单号
+function genOrderId(){
+    return Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+}
+//获取日期 YYYY‑MM‑DD
+function getTodayStr(){
+    return new Date().toISOString().slice(0,10);
+}
+
+allGoods.forEach(goodsDom => {
+    const originClick = goodsDom.onclick;
+    goodsDom.onclick = function () {
+        const goodsName = this.querySelector('.goods-name').innerText.trim();
+        //=====设备维度：本设备今日是否已经领过免费商品，不看手机号QQ=====
+        if(goodsName === "雪碧免费数据号（不包售后）"){
+            const today = getTodayStr();
+            const deviceFreeDay = localStorage.getItem("deviceFreeGoodsDay");
+            if(deviceFreeDay === today){
+                alert("当前设备今日已经领取过免费福利号，请明天再来！");
+                return;
+            }
+        }
+        originClick();
+        window.tempSelectPrice = getSelectGoodsPrice(this);
     }
 })
+
 numMinus.onclick = ()=>{
     let n = Number(numInput.value);
     if(n>1) numInput.value = n-1;
@@ -1030,17 +1010,29 @@ numPlus.onclick = ()=>{
     let n = Number(numInput.value);
     numInput.value = n+1;
 }
-document.getElementById('submitBtn').onclick = function(e){
+
+submitBtn.onclick = async function(e){
     e.preventDefault();
+    if(submitBtn.disabled) return;
     let val = msgInput.value.trim();
     if(!val){alert("请填写联系方式");return;}
     if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
         alert("号码格式错误");
         return;
     }
+    submitBtn.disabled = true;
+    submitBtn.innerText = "提交中...";
+    const currentGoodsName = goodsTitle.innerText;
+    const buyPrice = window.tempSelectPrice ?? 0;
+    //免费商品：下单成功立刻标记本设备今日已领取，不管填什么手机号
+    if(currentGoodsName === "雪碧免费数据号（不包售后）"){
+        const today = getTodayStr();
+        localStorage.setItem("deviceFreeGoodsDay", today);
+    }
+    saveLocalOrder(currentGoodsName, val, buyPrice);
     warnMask.style.display = 'flex';
 }
-// 无视提交结果，直接走完流程
+
 knownBtn.onclick = async ()=>{
     warnMask.style.display = 'none';
     loading.style.display = 'block';
@@ -1051,6 +1043,8 @@ knownBtn.onclick = async ()=>{
     msgInput.value = "";
     numInput.value = 1;
     loading.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.innerText = "确认下单";
 }
 closePopBtn.onclick = ()=> popMask.style.display = 'none';
 msgClose.onclick = ()=> msgMask.style.display = 'none';
@@ -1058,7 +1052,8 @@ formMask.onclick = e=>{if(e.target === formMask) formMask.style.display = 'none'
 warnMask.onclick = e=>{if(e.target === warnMask) warnMask.style.display = 'none';}
 popMask.onclick = e=>{if(e.target === popMask) popMask.style.display = 'none';}
 msgMask.onclick = e=>{if(e.target === msgMask) msgMask.style.display = 'none';}
-// 成交数字自增
+
+//成交数字
 let dealNum = document.getElementById('dealNum');
 let saveCount = localStorage.getItem('dealCount');
 if(saveCount) dealNum.innerText = saveCount;
@@ -1068,72 +1063,26 @@ setInterval(()=>{
     localStorage.setItem('dealCount', num);
     dealNum.innerText = num;
 },10000);
-// ===================== 新增：本地订单存储模块（全手机浏览器兼容） =====================
-// 1. 获取当前点击商品的价格
+
 function getSelectGoodsPrice(domItem) {
     let priceText = domItem.querySelector('.goods-price').innerText;
-    // 去除¥符号转数字，兼容0元免费商品
     return parseFloat(priceText.replace('¥', ''));
 }
-// 2. 保存订单到浏览器本地存储 localStorage
+
 function saveLocalOrder(goodsName, contactInfo, priceNum) {
-    // 读取已有订单，无数据则初始空数组
     let orderArr = JSON.parse(localStorage.getItem('localShopOrder') || '[]');
-    // 组装订单信息
     const orderData = {
+        orderId: genOrderId(),
         phoneQQ: contactInfo,
         goodsName: goodsName,
         price: priceNum,
-        createTime: new Date().toLocaleString(),
-        orderStatus: "待付款"
+        createTime: new Date().toISOString().slice(0,10),
+        createTimeFull: new Date().toLocaleString(),
+        orderStatus: "待付款",
+        cardKey:"请前往查询订单获取卡密"
     };
     orderArr.push(orderData);
     localStorage.setItem('localShopOrder', JSON.stringify(orderArr));
-
-    // ✅ 如果订单是免费福利号 → 记录今日已经领取
-    if(goodsName === "雪碧免费数据号（不包售后）"){
-        const today = new Date().toISOString().slice(0,10);
-        localStorage.setItem("freeGoodsGetDay", today);
-    }
-}
-// 3. 拦截商品点击事件，缓存当前选中商品价格
-let oldGoodsClickFun = allGoods[0].onclick;
-allGoods.forEach(goodsDom => {
-    const originClick = goodsDom.onclick;
-    goodsDom.onclick = function () {
-        // 获取商品名称
-        const goodsName = this.querySelector('.goods-name').innerText.trim();
-        // 判断是否是免费福利号
-        if(goodsName === "雪碧免费数据号（不包售后）"){
-            // 获取今天日期 YYYY‑MM‑DD
-            const today = new Date().toISOString().slice(0,10);
-            const freeGetDate = localStorage.getItem("freeGoodsGetDay");
-            if(freeGetDate === today){
-                alert("今日免费福利号已经领取，请明天再来！");
-                return; //阻止弹出下单弹窗，直接结束
-            }
-        }
-        originClick();
-        window.tempSelectPrice = getSelectGoodsPrice(this);
-    }
-})
-// 4. 重写下单提交按钮逻辑，表单校验通过后自动保存订单
-const oldSubmitBtnClick = document.getElementById('submitBtn').onclick;
-document.getElementById('submitBtn').onclick = function(e){
-    e.preventDefault();
-    let val = msgInput.value.trim();
-    // 原有校验逻辑完全保留，不修改
-    if(!val){alert("请填写联系方式");return;}
-    if(!/^\d+$/.test(val) || (val.length!==10 && val.length!==11)){
-        alert("号码格式错误");
-        return;
-    }
-    // ========== 新增：校验通过，写入本地订单 ==========
-    const currentGoodsName = goodsTitle.innerText;
-    const buyPrice = window.tempSelectPrice ?? 0;
-    saveLocalOrder(currentGoodsName, val, buyPrice);
-    // 原有弹窗逻辑不变
-    warnMask.style.display = 'flex';
 }
 </script>
 </body>
